@@ -10,7 +10,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QStandardPaths
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
 
-from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
+from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, RELEASE_URL, isWin11
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
 
@@ -27,22 +27,22 @@ class SettingInterface(ScrollArea):
         self.settingLabel = QLabel(self.tr("Settings"), self)
 
         # music folders
-        self.musicInThisPCGroup = SettingCardGroup(
-            self.tr("Music on this PC"), self.scrollWidget)
-        self.musicFolderCard = FolderListSettingCard(
-            cfg.musicFolders,
-            self.tr("Local music library"),
-            directory=QStandardPaths.writableLocation(
-                QStandardPaths.MusicLocation),
-            parent=self.musicInThisPCGroup
-        )
-        self.downloadFolderCard = PushSettingCard(
-            self.tr('Choose folder'),
-            FIF.DOWNLOAD,
-            self.tr("Download directory"),
-            cfg.get(cfg.downloadFolder),
-            self.musicInThisPCGroup
-        )
+        # self.musicInThisPCGroup = SettingCardGroup(
+        #     self.tr("Music on this PC"), self.scrollWidget)
+        # self.musicFolderCard = FolderListSettingCard(
+        #     cfg.musicFolders,
+        #     self.tr("Local music library"),
+        #     directory=QStandardPaths.writableLocation(
+        #         QStandardPaths.MusicLocation),
+        #     parent=self.musicInThisPCGroup
+        # )
+        # self.downloadFolderCard = PushSettingCard(
+        #     self.tr('Choose folder'),
+        #     FIF.DOWNLOAD,
+        #     self.tr("Download directory"),
+        #     cfg.get(cfg.downloadFolder),
+        #     self.musicInThisPCGroup
+        # )
 
         # personalization
         self.personalGroup = SettingCardGroup(
@@ -93,26 +93,26 @@ class SettingInterface(ScrollArea):
         )
 
         # material
-        self.materialGroup = SettingCardGroup(
-            self.tr('Material'), self.scrollWidget)
-        self.blurRadiusCard = RangeSettingCard(
-            cfg.blurRadius,
-            FIF.ALBUM,
-            self.tr('Acrylic blur radius'),
-            self.tr('The greater the radius, the more blurred the image'),
-            self.materialGroup
-        )
+        # self.materialGroup = SettingCardGroup(
+        #     self.tr('Material'), self.scrollWidget)
+        # self.blurRadiusCard = RangeSettingCard(
+        #     cfg.blurRadius,
+        #     FIF.ALBUM,
+        #     self.tr('Acrylic blur radius'),
+        #     self.tr('The greater the radius, the more blurred the image'),
+        #     self.materialGroup
+        # )
 
         # update software
-        self.updateSoftwareGroup = SettingCardGroup(
-            self.tr("Software update"), self.scrollWidget)
-        self.updateOnStartUpCard = SwitchSettingCard(
-            FIF.UPDATE,
-            self.tr('Check for updates when the application starts'),
-            self.tr('The new version will be more stable and have more features'),
-            configItem=cfg.checkUpdateAtStartUp,
-            parent=self.updateSoftwareGroup
-        )
+        # self.updateSoftwareGroup = SettingCardGroup(
+        #     self.tr("Software update"), self.scrollWidget)
+        # self.updateOnStartUpCard = SwitchSettingCard(
+        #     FIF.UPDATE,
+        #     self.tr('Check for updates when the application starts'),
+        #     self.tr('The new version will be more stable and have more features'),
+        #     configItem=cfg.checkUpdateAtStartUp,
+        #     parent=self.updateSoftwareGroup
+        # )
 
         # application
         self.aboutGroup = SettingCardGroup(self.tr('About'), self.scrollWidget)
@@ -122,14 +122,14 @@ class SettingInterface(ScrollArea):
             FIF.HELP,
             self.tr('Help'),
             self.tr(
-                'Discover new features and learn useful tips about PyQt-Fluent-Widgets'),
+                'Discover new features and learn useful tips about ROV -Control Panel'),
             self.aboutGroup
         )
         self.feedbackCard = PrimaryPushSettingCard(
             self.tr('Provide feedback'),
             FIF.FEEDBACK,
             self.tr('Provide feedback'),
-            self.tr('Help us improve PyQt-Fluent-Widgets by providing feedback'),
+            self.tr('Help us improve ROV -Control Panel by providing feedback'),
             self.aboutGroup
         )
         self.aboutCard = PrimaryPushSettingCard(
@@ -166,8 +166,8 @@ class SettingInterface(ScrollArea):
         self.settingLabel.move(36, 30)
 
         # add cards to group
-        self.musicInThisPCGroup.addSettingCard(self.musicFolderCard)
-        self.musicInThisPCGroup.addSettingCard(self.downloadFolderCard)
+        # self.musicInThisPCGroup.addSettingCard(self.musicFolderCard)
+        # self.musicInThisPCGroup.addSettingCard(self.downloadFolderCard)
 
         self.personalGroup.addSettingCard(self.micaCard)
         self.personalGroup.addSettingCard(self.themeCard)
@@ -175,9 +175,9 @@ class SettingInterface(ScrollArea):
         self.personalGroup.addSettingCard(self.zoomCard)
         self.personalGroup.addSettingCard(self.languageCard)
 
-        self.materialGroup.addSettingCard(self.blurRadiusCard)
+        # self.materialGroup.addSettingCard(self.blurRadiusCard)
 
-        self.updateSoftwareGroup.addSettingCard(self.updateOnStartUpCard)
+        # self.updateSoftwareGroup.addSettingCard(self.updateOnStartUpCard)
 
         self.aboutGroup.addSettingCard(self.helpCard)
         self.aboutGroup.addSettingCard(self.feedbackCard)
@@ -186,10 +186,10 @@ class SettingInterface(ScrollArea):
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
-        self.expandLayout.addWidget(self.musicInThisPCGroup)
+        # self.expandLayout.addWidget(self.musicInThisPCGroup)
         self.expandLayout.addWidget(self.personalGroup)
-        self.expandLayout.addWidget(self.materialGroup)
-        self.expandLayout.addWidget(self.updateSoftwareGroup)
+        # self.expandLayout.addWidget(self.materialGroup)
+        # self.expandLayout.addWidget(self.updateSoftwareGroup)
         self.expandLayout.addWidget(self.aboutGroup)
 
     def __showRestartTooltip(self):
@@ -197,27 +197,27 @@ class SettingInterface(ScrollArea):
         InfoBar.success(
             self.tr('Updated successfully'),
             self.tr('Configuration takes effect after restart'),
-            duration=1500,
+            duration=3000,
             parent=self
         )
 
-    def __onDownloadFolderCardClicked(self):
-        """ download folder card clicked slot """
-        folder = QFileDialog.getExistingDirectory(
-            self, self.tr("Choose folder"), "./")
-        if not folder or cfg.get(cfg.downloadFolder) == folder:
-            return
+    # def __onDownloadFolderCardClicked(self):
+    #     """ download folder card clicked slot """
+    #     folder = QFileDialog.getExistingDirectory(
+    #         self, self.tr("Choose folder"), "./")
+    #     if not folder or cfg.get(cfg.downloadFolder) == folder:
+    #         return
 
-        cfg.set(cfg.downloadFolder, folder)
-        self.downloadFolderCard.setContent(folder)
+    #     cfg.set(cfg.downloadFolder, folder)
+    #     self.downloadFolderCard.setContent(folder)
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
         cfg.appRestartSig.connect(self.__showRestartTooltip)
 
         # music in the pc
-        self.downloadFolderCard.clicked.connect(
-            self.__onDownloadFolderCardClicked)
+        # self.downloadFolderCard.clicked.connect(
+        #     self.__onDownloadFolderCardClicked)
 
         # personalization
         cfg.themeChanged.connect(setTheme)
@@ -227,3 +227,5 @@ class SettingInterface(ScrollArea):
         # about
         self.feedbackCard.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
+        self.aboutCard.clicked.connect(
+            lambda: QDesktopServices.openUrl(QUrl(RELEASE_URL)))
