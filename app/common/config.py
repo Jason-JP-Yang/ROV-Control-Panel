@@ -7,8 +7,11 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__)
 
-# ROV Connection Configuration 
-IPV4_ADDRESS = "192.168.137.102" 
+# ROV Deafult Connection Configuration 
+SSH_ADDRESS = "127.0.0.1" 
+SSH_PORT = 22
+SSH_USERNAME = "jasonyang"
+SSH_PASSWORD = "Yangr?gdrPM4>"
 
 # Basic Configuration
 YEAR = "2024-2025"
@@ -74,8 +77,14 @@ class Ipv4AddressValidator():
 class Config(QConfig):
     """ Config of application """
     # ROV Connection
-    tcpAddress = OptionsConfigItem(
-        "ROV_Connection", "tcpAddress", IPV4_ADDRESS, Ipv4AddressValidator(IPV4_ADDRESS))
+    sshAddress = OptionsConfigItem(
+        "ROV_Connection", "sshAddress", SSH_ADDRESS, Ipv4AddressValidator(SSH_ADDRESS))
+    sshPort = OptionsConfigItem(
+        "ROV_Connection", "sshUsername", SSH_PORT)
+    sshUser = OptionsConfigItem(
+        "ROV_Connection", "sshUsername", SSH_USERNAME)
+    sshPassword = OptionsConfigItem(
+        "ROV_Connection", "sshPassword", SSH_PASSWORD)
 
     # folders
     # musicFolders = ConfigItem(
@@ -98,4 +107,4 @@ class Config(QConfig):
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
-qconfig.load('/app/config/config.json', cfg)
+qconfig.load('app/config/config.json', cfg)

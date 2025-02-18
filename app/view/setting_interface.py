@@ -1,19 +1,122 @@
 # coding:utf-8
+from typing import Union
 from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSettingCard,
-                            OptionsSettingCard, PushSettingCard,
+                            OptionsSettingCard, PushSettingCard, SettingCard, ExpandGroupSettingCard,
                             HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, Theme, CustomColorSettingCard,
-                            setTheme, setThemeColor, RangeSettingCard, isDarkTheme)
+                            setTheme, setThemeColor, RangeSettingCard, isDarkTheme, 
+                            FluentIconBase, LineEdit, qconfig, PrimaryPushButton)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QStandardPaths
-from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog
+from PyQt5.QtGui import QDesktopServices, QIcon
+from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog, QHBoxLayout, QPushButton, QVBoxLayout
 
-from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, RELEASE_URL, isWin11
+from ..common.config import Config, cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, RELEASE_URL, isWin11
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
 
+import paramiko
+import socket
+from paramiko import SSHException, AuthenticationException
+
+class CustomSSHSettingCard(ExpandGroupSettingCard):
+    def __init__(self, configItems: list, icon: Union[str, QIcon, FluentIconBase], title: str,
+                 content=None, parent=None):
+        super().__init__(icon, title, content, parent=parent)
+        self.configSsh = configItems[0]
+        self.configPort = configItems[1]
+        self.configUsername = configItems[2]
+        self.configPassword = configItems[3]
+        self.connectionStatus = "Unknown"
+
+        self.Widget = QWidget(self.view)
+        self.Layout = QVBoxLayout(self.Widget)
+        self.line1Layout = QHBoxLayout(self.Widget)
+
+        self.editButton = QPushButton(
+            self.tr('Edit Settings'), self.Widget)
+        self.sshLinkLabel = QLabel(self.Widget)
+        self.passwordLabel = QLabel(self.Widget)
+
+        self.checkWidget = QWidget(self.view)
+        self.checkLayout = QHBoxLayout(self.checkWidget)
+        self.checkLabel = QLabel(self.checkWidget)
+        self.checkButton = PrimaryPushButton(
+            self.tr("Check SSH Connection"), self.checkWidget)
+
+        self.__initWidget()
+
+    def __initWidget(self):
+        self.__initLayout()
+        
+        self.sshLinkLabel.setText(self.tr("SSH Connection Link: ") + qconfig.get(self.configSsh))
+        self.sshLinkLabel.setObjectName("titleLabel")
+        self.sshLinkLabel.adjustSize()
+
+        self.passwordLabel.setText(self.tr("SSH Password: ") + qconfig.get(self.configPassword))
+        self.passwordLabel.setObjectName("titleLabel")
+        self.passwordLabel.adjustSize()
+
+        self.checkLabel.setText(self.tr("SSH Connection Status: ") + self.connectionStatus)
+        self.checkLabel.setObjectName("titleLabel")
+        self.checkLabel.adjustSize()
+    
+    def __initLayout(self):
+        self.Layout.setAlignment(Qt.AlignTop)
+        self.Layout.setContentsMargins(48, 18, 44, 18)
+        
+        self.line1Layout.addWidget(self.sshLinkLabel, 0, Qt.AlignLeft)
+        self.line1Layout.addWidget(self.editButton, 0, Qt.AlignRight | Qt.AlignTop)
+        
+        self.Layout.addLayout(self.line1Layout, 0)
+        self.Layout.addWidget(self.passwordLabel, 0, Qt.AlignLeft)
+        self.Layout.setSizeConstraint(QVBoxLayout.SetMinimumSize)
+
+        self.checkLayout.setContentsMargins(48, 18, 44, 18)
+        self.checkLayout.addWidget(self.checkLabel, 0, Qt.AlignLeft)
+        self.checkLayout.addWidget(self.checkButton, 0, Qt.AlignRight)
+        self.checkLayout.setSizeConstraint(QHBoxLayout.SetMinimumSize)
+
+        self.viewLayout.setSpacing(0)
+        self.viewLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.addGroupWidget(self.Widget)
+        self.addGroupWidget(self.checkWidget)
+    
+    def checkSSHConnection(self):
+        """
+        测试 SSH 连接
+
+        :param hostname: SSH 服务器的主机名或 IP 地址
+        :param port: SSH 端口号，默认为 22
+        :param username: SSH 用户名
+        :param password: SSH 密码
+        :return: (success, message) 其中 success 是布尔值，表示连接是否成功；message 是状态信息
+        """
+        client = paramiko.SSHClient()
+        # 自动添加未知的主机密钥，避免提示
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        try:
+            # 尝试连接 SSH 服务器
+            client.connect(
+                self.configSsh, port=self.configPort, 
+                username=self.configUsername, password=self.configPassword, timeout=5)
+            # 如果连接成功，返回成功信息
+            success, message = True, self.tr("SSH Connection Success!")
+        except AuthenticationException:
+            # 认证失败
+            success, message = False, self.tr("SSH Connection Failed: Authentication Failed, Asscess Denied")
+        except SSHException as e:
+            # 其他 SSH 错误
+            success, message = False, self.tr("SSH Connection Failed: ") + e
+        except socket.error as e:
+            # 网络错误
+            success, message = False, self.tr("Network Connection Failed: Check your Internet") + f"({e})"
+        finally:
+            # 确保连接关闭
+            client.close()
 
 class SettingInterface(ScrollArea):
     """ Setting interface """
@@ -43,6 +146,17 @@ class SettingInterface(ScrollArea):
         #     cfg.get(cfg.downloadFolder),
         #     self.musicInThisPCGroup
         # )
+
+        # ROV Connection
+        self.rovConnectGroup = SettingCardGroup(
+            self.tr('ROV Connection'), self.scrollWidget)
+        self.sshconfig = CustomSSHSettingCard(
+            [cfg.sshAddress, cfg.sshPort, cfg.sshUser, cfg.sshPassword],
+            FIF.CERTIFICATE,
+            self.tr("ROV SSH Connection"),
+            self.tr("TEST"), 
+            self.rovConnectGroup
+        )
 
         # personalization
         self.personalGroup = SettingCardGroup(
@@ -169,6 +283,8 @@ class SettingInterface(ScrollArea):
         # self.musicInThisPCGroup.addSettingCard(self.musicFolderCard)
         # self.musicInThisPCGroup.addSettingCard(self.downloadFolderCard)
 
+        self.rovConnectGroup.addSettingCard(self.sshconfig)
+
         self.personalGroup.addSettingCard(self.micaCard)
         self.personalGroup.addSettingCard(self.themeCard)
         self.personalGroup.addSettingCard(self.themeColorCard)
@@ -187,6 +303,7 @@ class SettingInterface(ScrollArea):
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
         # self.expandLayout.addWidget(self.musicInThisPCGroup)
+        self.expandLayout.addWidget(self.rovConnectGroup)
         self.expandLayout.addWidget(self.personalGroup)
         # self.expandLayout.addWidget(self.materialGroup)
         # self.expandLayout.addWidget(self.updateSoftwareGroup)
