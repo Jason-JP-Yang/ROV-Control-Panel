@@ -1,5 +1,5 @@
 # coding: utf-8
-from PyQt5.QtCore import QUrl, QSize, QTimer
+from PyQt5.QtCore import QUrl, QSize, QTimer, QEventLoop
 from PyQt5.QtGui import QIcon, QDesktopServices, QColor
 from PyQt5.QtWidgets import QApplication
 
@@ -36,7 +36,6 @@ class MainWindow(FluentWindow):
         super().__init__()
         self.initWindow()
 
-        start_time = time.time()  # 记录开始时间
         # create system theme listener
         self.themeListener = SystemThemeListener(self)
 
@@ -63,11 +62,6 @@ class MainWindow(FluentWindow):
 
         # add items to navigation interface
         self.initNavigation()
-        
-        # 休眠延迟
-        elapsed_time = time.time() - start_time
-        remaining_time = max(0.5 - elapsed_time, 0)  # 剩余时间不能为负数
-        time.sleep(remaining_time)
         self.splashScreen.finish()
 
         # start theme listener
