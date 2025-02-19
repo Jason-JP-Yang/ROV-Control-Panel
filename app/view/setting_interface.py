@@ -4,12 +4,12 @@ from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSetti
                             OptionsSettingCard, PushSettingCard, SettingCard, ExpandGroupSettingCard,
                             HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
                             ComboBoxSettingCard, ExpandLayout, TitleLabel, CustomColorSettingCard,
-                            setTheme, setThemeColor, RangeSettingCard, isDarkTheme, 
-                            FluentIconBase, LineEdit, qconfig, PrimaryPushButton, 
-                            IndeterminateProgressBar, MessageBoxBase, SimpleExpandGroupSettingCard)
+                            setTheme, setThemeColor, MessageBox, isDarkTheme, 
+                            FluentIconBase, LineEdit, qconfig, PrimaryPushButton, PushButton,
+                            IndeterminateProgressBar, MessageBoxBase, InfoBarPosition)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
-from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QStandardPaths, QTimer, QEventLoop, pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QPoint, QEventLoop, QTimer, pyqtSlot
 from PyQt5.QtGui import QDesktopServices, QIcon
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog, QHBoxLayout, QPushButton, QVBoxLayout, QSizePolicy
 
@@ -17,7 +17,7 @@ from ..common.config import Config, cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
 
-import paramiko, socket
+import paramiko, socket, time
 from paramiko import SSHException, AuthenticationException
 
 import threading
@@ -36,6 +36,8 @@ class sshSettingBox(MessageBoxBase):
         super().__init__(parent)
 
 class CustomSSHSettingCard(ExpandGroupSettingCard):
+    sshUpdated = pyqtSignal(bool)
+    
     def __init__(self, configItems: Config, icon: Union[str, QIcon, FluentIconBase], title: str,
                  content=None, parent=None):
         super().__init__(icon, title, content, parent=parent)
@@ -44,13 +46,14 @@ class CustomSSHSettingCard(ExpandGroupSettingCard):
         self.configUsername = configItems.sshUser
         self.configPassword = configItems.sshPassword
         self.connectionStatus = "Unknown"
+        self.sshMessage = "NONE"
 
         self.Widget = QWidget(self.view)
         self.Layout = QHBoxLayout(self.Widget)
         self.leftLayout = QVBoxLayout(self.Widget)
         self.rightLayout = QVBoxLayout(self.Widget)
 
-        self.editButton = QPushButton(
+        self.editButton = PushButton(
             self.tr('Edit Settings'), self.Widget)
         self.sshLinkLabel = QLabel(self.Widget)
         self.sshPort = QLabel(self.Widget)
@@ -61,9 +64,12 @@ class CustomSSHSettingCard(ExpandGroupSettingCard):
         self.checkLayout = QHBoxLayout(self.checkWidget)
         self.checkingBar = IndeterminateProgressBar(self.checkWidget)
         self.checkLabel = QLabel(self.checkWidget)
+        self.detailButton = PushButton(
+            self.tr('View Details'), self.checkWidget)
         self.checkButton = PrimaryPushButton(
             self.tr("Check SSH Connection"), self.checkWidget)
         self.checkButton.clicked.connect(self.updateSSHStatus)
+        self.detailButton.clicked.connect(self.showSSHDetail)
 
         self.__initWidget()
 
@@ -77,7 +83,7 @@ class CustomSSHSettingCard(ExpandGroupSettingCard):
         self.checkLabel.setObjectName("titleLabel")
         self.__updateLabel()
 
-        self.updateSSHStatus()
+        self.updateSSHStatus(init=True)
     
     def __initLayout(self):
         self.Layout.setAlignment(Qt.AlignTop)
@@ -98,6 +104,7 @@ class CustomSSHSettingCard(ExpandGroupSettingCard):
         self.checkLayout.addWidget(self.checkLabel, 0, Qt.AlignLeft)
         self.checkLayout.addWidget(self.checkingBar, 0, Qt.AlignLeft)
         self.checkLayout.addStretch()
+        self.checkLayout.addWidget(self.detailButton, 0, Qt.AlignRight)
         self.checkLayout.addWidget(self.checkButton, 0, Qt.AlignRight)
         self.checkLayout.setSizeConstraint(QHBoxLayout.SetMinimumSize)
 
@@ -137,39 +144,69 @@ class CustomSSHSettingCard(ExpandGroupSettingCard):
                 qconfig.get(self.configSsh), port=qconfig.get(self.configPort), 
                 username=qconfig.get(self.configUsername), password=qconfig.get(self.configPassword), timeout=5)
             # 如果连接成功，返回成功信息
-            return "Success", self.tr("SSH Connection Success!")
+            return "Success", self.tr("SSH Connection Status: Success! \nConfig: ") +\
+                "[SSH Address: {0}, SSH Port: {1}, Username: {2}, \
+                Passowrd: {3}]".format(qconfig.get(self.configSsh), qconfig.get(self.configPort),
+                                              qconfig.get(self.configUsername), qconfig.get(self.configPassword))
         except AuthenticationException:
             # 认证失败
-            return "Failed", self.tr("SSH Connection Failed: Authentication Failed, Asscess Denied")
+            return "Failed", self.tr("SSH Connection Failed: Authentication Failed, Asscess Denied \nConfig: ") +\
+                "[SSH Address: {0}, SSH Port: {1}, Username: {2}, \
+                Passowrd: {3}]".format(qconfig.get(self.configSsh), qconfig.get(self.configPort),
+                                              qconfig.get(self.configUsername), qconfig.get(self.configPassword))
         except SSHException as e:
             # 其他 SSH 错误
-            return "Failed", self.tr("SSH Connection Failed: ") + e
+            return "Failed", self.tr("SSH Connection Failed: ") + e + " \nConfig: " +\
+                "[SSH Address: {0}, SSH Port: {1}, Username: {2}, \
+                Passowrd: {3}]".format(qconfig.get(self.configSsh), qconfig.get(self.configPort),
+                                              qconfig.get(self.configUsername), qconfig.get(self.configPassword))
         except socket.error as e:
             # 网络错误
-            return "Failed", self.tr("Network Connection Failed: Check your Internet ") + f"({e})"
+            return "Failed", self.tr("Network Connection Failed: Please check your Internet ") \
+                + f"({e})" + " \nConfig: " +\
+                "[SSH Address: {0}, SSH Port: {1}, Username: {2}, \
+                Passowrd: {3}]".format(qconfig.get(self.configSsh), qconfig.get(self.configPort),
+                                              qconfig.get(self.configUsername), qconfig.get(self.configPassword))
         finally:
             # 确保连接关闭
             client.close()
 
     @pyqtSlot()
     @threaded_func
-    def updateSSHStatus(self):
+    def updateSSHStatus(self, init: bool = False):
         if self.connectionStatus == "Checking": return
         
+        start_time = time.time()
         self.connectionStatus = "Checking"
         self.checkButton.setEnabled(False)
+        self.detailButton.setEnabled(False)
         self.checkLabel.setText(self.tr("Checking Connection: "))
         self.checkLabel.adjustSize()
         self.checkingBar.show()
 
-        self.connectionStatus, message = self.__checkSSHConnection()
-        print(self.connectionStatus, message)
+        self.connectionStatus, self.sshMessage = self.__checkSSHConnection()
+        print(self.connectionStatus, self.sshMessage)
+        
+        # 延时
+        loop = QEventLoop()
+        QTimer.singleShot(int((1 - time.time() + start_time) * 1000), loop.quit)
+        loop.exec_()
 
         self.checkingBar.hide()
         self.checkLabel.setText(self.tr("Connection Status: ") + self.connectionStatus)
+        # self.checkLabel.setText(message)
         self.checkButton.setEnabled(True)
+        self.detailButton.setEnabled(True)
         self._adjustViewSize()
+
+        self.sshUpdated.emit(init)
     
+    def showSSHDetail(self):
+        print("T")
+        w = MessageBox(self.tr("SSH Connection Status: ") + self.connectionStatus, 
+                       self.sshMessage, self.window())
+        w.show()
+
     def toggleExpand(self):
         """ toggle expand status """
         self.setExpand(not self.isExpand)
@@ -214,6 +251,7 @@ class SettingInterface(ScrollArea):
             self.tr("Configure the connection between ROV and computer using SSH Protocol"), 
             self.rovConnectGroup
         )
+        self.sshconfig.sshUpdated.connect(self.__ssh_pop_infoBar)
 
         # personalization
         self.personalGroup = SettingCardGroup(
@@ -374,6 +412,37 @@ class SettingInterface(ScrollArea):
             duration=3000,
             parent=self
         )
+
+    def __ssh_pop_infoBar(self, init: bool):
+        if init: return
+        if self.sshconfig.connectionStatus == "Success":
+            w = InfoBar.success(
+                title=self.tr("SSH Connection:"),
+                content=self.tr("Success!  "),
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.BOTTOM_LEFT,
+                duration=2000,    # won't disappear automatically
+                parent=self
+            )
+            wbtn = PushButton(self.tr('View Details'), self)
+            wbtn.clicked.connect(self.sshconfig.showSSHDetail)
+            w.addWidget(wbtn, 0)
+            w.show()
+        elif self.sshconfig.connectionStatus == "Failed":
+            w = InfoBar.error(
+                title=self.tr("SSH Connection: "),
+                content=self.tr("Failed!  "),
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.BOTTOM_LEFT,
+                duration=-1,    # won't disappear automatically
+                parent=self
+            )
+            wbtn = PushButton(self.tr('View Details'), self)
+            wbtn.clicked.connect(self.sshconfig.showSSHDetail)
+            w.addWidget(wbtn, 0)
+            w.show()
 
     # def __onDownloadFolderCardClicked(self):
     #     """ download folder card clicked slot """
