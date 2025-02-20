@@ -29,11 +29,12 @@ app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 # internationalization
 locale = cfg.get(cfg.language).value
 translator = FluentTranslator(locale)
-galleryTranslator = QTranslator()
-galleryTranslator.load(locale, "gallery", ".", ":/gallery/i18n")
+
+appTranslator = QTranslator()
+appTranslator.load(locale, "app", ".", "./app/resource/i18n")
 
 app.installTranslator(translator)
-app.installTranslator(galleryTranslator)
+app.installTranslator(appTranslator)
 
 # create main window
 w = MainWindow()
