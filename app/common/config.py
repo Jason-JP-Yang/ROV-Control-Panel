@@ -8,10 +8,10 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
                             FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__)
 
 # ROV Deafult Connection Configuration 
-SSH_ADDRESS = "127.0.0.1" 
+SSH_ADDRESS = "192.168.137.102" 
 SSH_PORT = 22
-SSH_USERNAME = "jasonyang"
-SSH_PASSWORD = "Yangr?gdrPM4>"
+SSH_USERNAME = "rov"
+SSH_PASSWORD = "Aa123456"
 
 # Basic Configuration
 YEAR = "2024-2025"
@@ -46,44 +46,16 @@ class LanguageSerializer(ConfigSerializer):
 def isWin11():
     return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
 
-class Ipv4AddressValidator():
-    """ Ipv4 Address Validator """
-
-    def __init__(self, default="0.0.0.0"):
-        super().__init__()
-        if not self.validate(default):
-            raise ValueError(f"Invalid default IPv4 address: {default}")
-        self.default = default
-
-    def validate(self, value):
-        if not isinstance(value, str):
-            return False
-        parts = value.split('.')
-        if len(parts) != 4:
-            return False
-        for part in parts:
-            if not part.isdigit():
-                return False
-            num = int(part)
-            if num < 0 or num > 255:
-                return False
-            if len(part) > 1 and part.startswith('0'):
-                return False
-        return True
-
-    def correct(self, value):
-        return value if self.validate(value) else self.default
-
 class Config(QConfig):
     """ Config of application """
     # ROV Connection
-    sshAddress = OptionsConfigItem(
-        "ROV_Connection", "sshAddress", SSH_ADDRESS, Ipv4AddressValidator(SSH_ADDRESS))
-    sshPort = OptionsConfigItem(
-        "ROV_Connection", "sshUsername", SSH_PORT)
-    sshUser = OptionsConfigItem(
+    sshAddress = ConfigItem(
+        "ROV_Connection", "sshAddress", SSH_ADDRESS)
+    sshPort = ConfigItem(
+        "ROV_Connection", "sshPort", SSH_PORT)
+    sshUser = ConfigItem(
         "ROV_Connection", "sshUsername", SSH_USERNAME)
-    sshPassword = OptionsConfigItem(
+    sshPassword = ConfigItem(
         "ROV_Connection", "sshPassword", SSH_PASSWORD)
 
     # folders
