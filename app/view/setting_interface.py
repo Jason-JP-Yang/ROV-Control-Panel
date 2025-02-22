@@ -8,7 +8,7 @@ from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSetti
                             FluentIconBase, LineEdit, qconfig, PrimaryPushButton, PushButton,
                             IndeterminateProgressBar, MessageBoxBase, InfoBarPosition,
                             SubtitleLabel, CaptionLabel, BodyLabel, SpinBox, PasswordLineEdit,
-                            CheckBox, SwitchButton)
+                            CheckBox, SwitchButton, ComboBox)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QPoint, QEventLoop, QTimer, pyqtSlot
@@ -294,6 +294,150 @@ class sshSettingBox(MessageBoxBase):
 
         self.widget.setMinimumWidth(450)
 
+class CustomCameraSettingCard(ExpandGroupSettingCard):
+    def __init__(self, configItems: Config, icon: Union[str, QIcon, FluentIconBase], title: str,
+                 content=None, parent=None):
+        super().__init__(icon, title, content, parent)
+        self.configItems = configItems
+        self.uvcAddress_items = ["/?action=stream", "/?action=stream_0", "/?action=stream_1",
+                                 "/?action=stream_2", "/?action=stream_3", "/?action=stream_4"]
+
+        self.mjpgStreamer = QWidget(self)
+        self.mjpgStreamer_Layout = QHBoxLayout(self.mjpgStreamer)
+        self.mjpgStreamer_Label = QLabel(self.tr("MJPG-Streamer Server HTTP Address: "), self.mjpgStreamer)
+        self.mjpgStreamer_Address = LineEdit(self.mjpgStreamer)
+        self.editButton = PushButton(
+            self.tr('Advance Settings'), self.mjpgStreamer)
+
+        self.uvc_cam00 = QWidget(self)
+        self.uvcCam00_Layout = QHBoxLayout(self.uvc_cam00)
+        self.uvcCam00_Label = QLabel(self.tr("UVC Camera 01: Left Machine Arm"), self.uvc_cam00)
+        self.uvcCam00_Enabled = SwitchButton(self.uvc_cam00)
+        self.uvcCam00_Address = ComboBox(self.uvc_cam00)
+
+        self.uvc_cam01 = QWidget(self)
+        self.uvcCam01_Layout = QHBoxLayout(self.uvc_cam01)
+        self.uvcCam01_Label = QLabel(self.tr("UVC Camera 02: Right Machine Arm"), self.uvc_cam01)
+        self.uvcCam01_Enabled = SwitchButton(self.uvc_cam01)
+        self.uvcCam01_Address = ComboBox(self.uvc_cam01)
+
+        self.uvc_cam02 = QWidget(self)
+        self.uvcCam02_Layout = QHBoxLayout(self.uvc_cam02)
+        self.uvcCam02_Label = QLabel(self.tr("UVC Camera 03: Left Forward Viewing Eye"), self.uvc_cam02)
+        self.uvcCam02_Enabled = SwitchButton(self.uvc_cam02)
+        self.uvcCam02_Address = ComboBox(self.uvc_cam02)
+
+        self.uvc_cam03 = QWidget(self)
+        self.uvcCam03_Layout = QHBoxLayout(self.uvc_cam03)
+        self.uvcCam03_Label = QLabel(self.tr("UVC Camera 04: Right Forward Viewing Eye"), self.uvc_cam03)
+        self.uvcCam03_Enabled = SwitchButton(self.uvc_cam03)
+        self.uvcCam03_Address = ComboBox(self.uvc_cam03)
+
+        self.uvc_cam04 = QWidget(self)
+        self.uvcCam04_Layout = QHBoxLayout(self.uvc_cam04)
+        self.uvcCam04_Label = QLabel(self.tr("UVC Camera 05: Backward Viewing Eye"),self.uvc_cam04)
+        self.uvcCam04_Enabled = SwitchButton(self.uvc_cam04)
+        self.uvcCam04_Address = ComboBox(self.uvc_cam04)
+
+        self.checkWidget = QWidget(self.view)
+        self.checkLayout = QHBoxLayout(self.checkWidget)
+        self.checkingBar = IndeterminateProgressBar(self.checkWidget)
+        self.checkLabel = QLabel(self.checkWidget)
+        self.detailButton = PushButton(
+            self.tr('View Details'), self.checkWidget)
+        self.checkButton = PrimaryPushButton(
+            self.tr("Check Cameras Connection"), self.checkWidget)
+
+        self.__initWidget()
+
+    def __initWidget(self):
+        self.__initLayout()
+
+        self.mjpgStreamer_Label.setObjectName("titleLabel")
+        self.uvcCam00_Label.setObjectName("titleLabel")
+        self.uvcCam01_Label.setObjectName("titleLabel")
+        self.uvcCam02_Label.setObjectName("titleLabel")
+        self.uvcCam03_Label.setObjectName("titleLabel")
+        self.uvcCam04_Label.setObjectName("titleLabel")
+        self.checkLabel.setObjectName("titleLabel")
+
+        self.uvcCam00_Address.addItems(self.uvcAddress_items)
+        self.uvcCam01_Address.addItems(self.uvcAddress_items)
+        self.uvcCam02_Address.addItems(self.uvcAddress_items)
+        self.uvcCam03_Address.addItems(self.uvcAddress_items)
+        self.uvcCam04_Address.addItems(self.uvcAddress_items)
+
+        # self.__updateItems()
+
+    def __updateItems(self):
+        self.mjpgStreamer_Address.setText(qconfig.get(self.configItems.mjpgServerAddress))
+        self.mjpgStreamer_Address.setPlaceholderText(qconfig.get(self.configItems.mjpgServerAddress))
+        self.mjpgStreamer_Address.setClearButtonEnabled(True)
+
+    def __initLayout(self):
+        self.mjpgStreamer_Layout.setContentsMargins(48, 18, 44, 18)
+        self.mjpgStreamer_Layout.addWidget(self.mjpgStreamer_Label, 0, Qt.AlignLeft)
+        self.mjpgStreamer_Layout.addSpacing(50)
+        self.mjpgStreamer_Layout.addWidget(self.mjpgStreamer_Address, 1)
+        self.mjpgStreamer_Layout.addSpacing(15)
+        self.mjpgStreamer_Layout.addWidget(self.editButton, 0, Qt.AlignRight)
+
+        self.uvcCam00_Layout.setContentsMargins(48, 18, 44, 18)
+        self.uvcCam00_Layout.addWidget(self.uvcCam00_Label, 0, Qt.AlignLeft)
+        self.uvcCam00_Layout.addStretch()
+        self.uvcCam00_Layout.addWidget(self.uvcCam00_Enabled, 0, Qt.AlignRight)
+        self.uvcCam00_Layout.addSpacing(15)
+        self.uvcCam00_Address.setFixedWidth(180)
+        self.uvcCam00_Layout.addWidget(self.uvcCam00_Address, 0, Qt.AlignRight)
+
+        self.uvcCam01_Layout.setContentsMargins(48, 18, 44, 18)
+        self.uvcCam01_Layout.addWidget(self.uvcCam01_Label, 0, Qt.AlignLeft)
+        self.uvcCam01_Layout.addStretch()
+        self.uvcCam01_Layout.addWidget(self.uvcCam01_Enabled, 0, Qt.AlignRight)
+        self.uvcCam01_Layout.addSpacing(15)
+        self.uvcCam01_Address.setFixedWidth(180)
+        self.uvcCam01_Layout.addWidget(self.uvcCam01_Address, 0, Qt.AlignRight)
+
+        self.uvcCam02_Layout.setContentsMargins(48, 18, 44, 18)
+        self.uvcCam02_Layout.addWidget(self.uvcCam02_Label, 0, Qt.AlignLeft)
+        self.uvcCam02_Layout.addStretch()
+        self.uvcCam02_Layout.addWidget(self.uvcCam02_Enabled, 0, Qt.AlignRight)
+        self.uvcCam02_Layout.addSpacing(15)
+        self.uvcCam02_Address.setFixedWidth(180)
+        self.uvcCam02_Layout.addWidget(self.uvcCam02_Address, 0, Qt.AlignRight)
+
+        self.uvcCam03_Layout.setContentsMargins(48, 18, 44, 18)
+        self.uvcCam03_Layout.addWidget(self.uvcCam03_Label, 0, Qt.AlignLeft)
+        self.uvcCam03_Layout.addStretch()
+        self.uvcCam03_Layout.addWidget(self.uvcCam03_Enabled, 0, Qt.AlignRight)
+        self.uvcCam03_Layout.addSpacing(15)
+        self.uvcCam03_Address.setFixedWidth(180)
+        self.uvcCam03_Layout.addWidget(self.uvcCam03_Address, 0, Qt.AlignRight)
+
+        self.uvcCam04_Layout.setContentsMargins(48, 18, 44, 18)
+        self.uvcCam04_Layout.addWidget(self.uvcCam04_Label, 0, Qt.AlignLeft)
+        self.uvcCam04_Layout.addStretch()
+        self.uvcCam04_Layout.addWidget(self.uvcCam04_Enabled, 0, Qt.AlignRight)
+        self.uvcCam04_Layout.addSpacing(15)
+        self.uvcCam04_Address.setFixedWidth(180)
+        self.uvcCam04_Layout.addWidget(self.uvcCam04_Address, 0, Qt.AlignRight)
+
+        self.checkLayout.setContentsMargins(48, 18, 44, 18)
+        self.checkLayout.addWidget(self.checkLabel, 0, Qt.AlignLeft)
+        self.checkLayout.addWidget(self.checkingBar, 0, Qt.AlignLeft)
+        self.checkLayout.addStretch()
+        self.checkLayout.addWidget(self.detailButton, 0, Qt.AlignRight)
+        self.checkLayout.addWidget(self.checkButton, 0, Qt.AlignRight)
+        self.checkLayout.setSizeConstraint(QHBoxLayout.SetMinimumSize)
+
+        self.addGroupWidget(self.mjpgStreamer)
+        self.addGroupWidget(self.uvc_cam00)
+        self.addGroupWidget(self.uvc_cam01)
+        self.addGroupWidget(self.uvc_cam02)
+        self.addGroupWidget(self.uvc_cam03)
+        self.addGroupWidget(self.uvc_cam04)
+        self.addGroupWidget(self.checkWidget)
+
 class SettingInterface(ScrollArea):
     """ Setting interface """
 
@@ -334,6 +478,13 @@ class SettingInterface(ScrollArea):
             self.rovConnectGroup
         )
         self.sshconfig.sshUpdated.connect(self.__ssh_pop_infoBar)
+        self.camconfig = CustomCameraSettingCard(
+            cfg,
+            FIF.CAMERA,
+            self.tr("ROV Cameras Connnection"),
+            self.tr("Modify and test for the 5 cameras on the ROV using HTTP Stream Protocol"),
+            self.rovConnectGroup
+        )
 
         # personalization
         self.personalGroup = SettingCardGroup(
@@ -461,6 +612,7 @@ class SettingInterface(ScrollArea):
         # self.musicInThisPCGroup.addSettingCard(self.downloadFolderCard)
 
         self.rovConnectGroup.addSettingCard(self.sshconfig)
+        self.rovConnectGroup.addSettingCard(self.camconfig)
 
         self.personalGroup.addSettingCard(self.micaCard)
         self.personalGroup.addSettingCard(self.themeCard)
