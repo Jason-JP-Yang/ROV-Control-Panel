@@ -3,12 +3,12 @@ from typing import Union
 from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSettingCard,
                             OptionsSettingCard, PushSettingCard, SettingCard, ExpandGroupSettingCard,
                             HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, TitleLabel, CustomColorSettingCard,
+                            ComboBoxSettingCard, ExpandLayout, TextBrowser, CustomColorSettingCard,
                             setTheme, setThemeColor, MessageBox, isDarkTheme, 
                             FluentIconBase, LineEdit, qconfig, PrimaryPushButton, PushButton,
                             IndeterminateProgressBar, MessageBoxBase, InfoBarPosition,
                             SubtitleLabel, CaptionLabel, BodyLabel, SpinBox, PasswordLineEdit,
-                            CheckBox, SwitchButton, ComboBox)
+                            CheckBox, SwitchButton, ComboBox, SingleDirectionScrollArea)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QPoint, QEventLoop, QTimer, pyqtSlot
@@ -19,12 +19,12 @@ from ..common.config import Config, cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
 
-import paramiko, socket, time
+import paramiko, socket, time, json
 from datetime import datetime
 from paramiko import SSHException, AuthenticationException
+from concurrent.futures import ThreadPoolExecutor
 
-import threading
-import functools
+import threading, functools, requests
 
 def threaded_func(func):
     @functools.wraps(func)
@@ -33,7 +33,6 @@ def threaded_func(func):
         thread.start()
         return thread  # 如果需要返回线程对象，可以返回它，否则可以选择不返回
     return wrapper
-
 
 class CustomSSHSettingCard(ExpandGroupSettingCard):
     sshUpdated = pyqtSignal(bool)
@@ -301,6 +300,12 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.configItems = configItems
         self.uvcAddress_items = ["/?action=stream", "/?action=stream_0", "/?action=stream_1",
                                  "/?action=stream_2", "/?action=stream_3", "/?action=stream_4"]
+        self.connectionStatus = True
+        self.resultCam00 = {"connectionStatus": "None"}
+        self.resultCam01 = {"connectionStatus": "None"}
+        self.resultCam02 = {"connectionStatus": "None"}
+        self.resultCam03 = {"connectionStatus": "None"}
+        self.resultCam04 = {"connectionStatus": "None"}
 
         self.mjpgStreamer = QWidget(self)
         self.mjpgStreamer_Layout = QHBoxLayout(self.mjpgStreamer)
@@ -367,12 +372,231 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.uvcCam03_Address.addItems(self.uvcAddress_items)
         self.uvcCam04_Address.addItems(self.uvcAddress_items)
 
-        # self.__updateItems()
+        self.__updateItems()
+        self.updateStatus()
+
+        self.mjpgStreamer_Address.editingFinished.connect(lambda: self.changeConfig("mjpgStreamerAddress"))
+        self.uvcCam00_Enabled.checkedChanged.connect(lambda: self.changeConfig("Cam00CheckEnable"))
+        self.uvcCam00_Address.currentIndexChanged.connect(lambda: self.changeConfig("Cam00AddressChange"))
+        
+        self.uvcCam01_Enabled.checkedChanged.connect(lambda: self.changeConfig("Cam01CheckEnable"))
+        self.uvcCam01_Address.currentIndexChanged.connect(lambda: self.changeConfig("Cam01AddressChange"))
+        
+        self.uvcCam02_Enabled.checkedChanged.connect(lambda: self.changeConfig("Cam02CheckEnable"))
+        self.uvcCam02_Address.currentIndexChanged.connect(lambda: self.changeConfig("Cam02AddressChange"))
+        
+        self.uvcCam03_Enabled.checkedChanged.connect(lambda: self.changeConfig("Cam03CheckEnable"))
+        self.uvcCam03_Address.currentIndexChanged.connect(lambda: self.changeConfig("Cam03AddressChange"))
+        
+        self.uvcCam04_Enabled.checkedChanged.connect(lambda: self.changeConfig("Cam04CheckEnable"))
+        self.uvcCam04_Address.currentIndexChanged.connect(lambda: self.changeConfig("Cam04AddressChange"))
+
+        self.checkButton.clicked.connect(self.updateStatus)
+        self.detailButton.clicked.connect(self.__viewConDetail)
+
+    def checkCamConnection(self, url):
+        try:
+            # 使用流式请求，避免一次性下载所有数据
+            with requests.get(url, stream=True, timeout=5) as response:
+                # 检查响应状态
+                if response.status_code == 200:
+                    success = True
+                    self.connectionStatus &= True
+                else:
+                    success = False
+                    self.connectionStatus &= False
+
+                # 提取常规 HTTP 信息
+                request_information = {
+                    "requestURL": response.request.url,
+                    "requestMethod": response.request.method,
+                    "statusCode": response.status_code,
+                    "referrerPolicy": "no-referrer"  # 假设没有引用站点策略
+                }
+
+                # 提取请求标头中的特定内容
+                request_headers = {
+                    "Accept": response.request.headers.get("Accept", "Not Specified"),
+                    "UserAgent": response.request.headers.get("User-Agent", "Not Specified")
+                }
+
+                # 提取响应标头中的特定内容
+                response_headers = {
+                    "cache-control": response.headers.get("Cache-Control", "Not Specified"),
+                    "content-type": response.headers.get("Content-Type", "Not Specified"),
+                    "server": response.headers.get("Server", "Not Specified")
+                }
+
+                # 记录当前时间
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                return {
+                    "connectionStatus": success,
+                    "requestInformation": request_information,
+                    "requestHeaders": request_headers,
+                    "responseHeaders": response_headers,
+                    "datetime": timestamp
+                }
+        except requests.exceptions.Timeout:
+            self.connectionStatus &= False
+            return {
+                "connectionStatus": False,
+                "errorMessage": "Connection timed out"
+            }
+        except requests.exceptions.RequestException as e:
+            self.connectionStatus &= False
+            return {
+                "connectionStatus": False,
+                "errorMessage": f"Request failed: {str(e)}"
+            }
+
+    @pyqtSlot()
+    def changeConfig(self, terms):
+        if terms == "mjpgStreamerAddress":
+            print(self.mjpgStreamer_Address.text())
+            qconfig.set(self.configItems.mjpgServerAddress, self.mjpgStreamer_Address.text())
+        
+        elif terms == "Cam00CheckEnable":
+            print(self.uvcCam00_Enabled.isChecked())
+            qconfig.set(self.configItems.uvcCam00_Enabled, self.uvcCam00_Enabled.isChecked())
+            self.uvcCam00_Address.setEnabled(self.uvcCam00_Enabled.isChecked())
+        elif terms == "Cam00AddressChange":
+            print(self.uvcCam00_Address.currentIndex())
+            qconfig.set(self.configItems.uvcCam00_Address, 
+                        self.uvcAddress_items[self.uvcCam00_Address.currentIndex()])
+            
+        elif terms == "Cam01CheckEnable":
+            print(self.uvcCam01_Enabled.isChecked())
+            qconfig.set(self.configItems.uvcCam01_Enabled, self.uvcCam01_Enabled.isChecked())
+            self.uvcCam01_Address.setEnabled(self.uvcCam01_Enabled.isChecked())
+        elif terms == "Cam01AddressChange":
+            print(self.uvcCam01_Address.currentIndex())
+            qconfig.set(self.configItems.uvcCam01_Address, 
+                        self.uvcAddress_items[self.uvcCam01_Address.currentIndex()])
+            
+        elif terms == "Cam02CheckEnable":
+            print(self.uvcCam02_Enabled.isChecked())
+            qconfig.set(self.configItems.uvcCam02_Enabled, self.uvcCam02_Enabled.isChecked())
+            self.uvcCam02_Address.setEnabled(self.uvcCam02_Enabled.isChecked())
+        elif terms == "Cam02AddressChange":
+            print(self.uvcCam02_Address.currentIndex())
+            qconfig.set(self.configItems.uvcCam02_Address, 
+                        self.uvcAddress_items[self.uvcCam02_Address.currentIndex()])
+            
+        elif terms == "Cam03CheckEnable":
+            print(self.uvcCam03_Enabled.isChecked())
+            qconfig.set(self.configItems.uvcCam03_Enabled, self.uvcCam03_Enabled.isChecked())
+            self.uvcCam03_Address.setEnabled(self.uvcCam03_Enabled.isChecked())
+        elif terms == "Cam03AddressChange":
+            print(self.uvcCam03_Address.currentIndex())
+            qconfig.set(self.configItems.uvcCam03_Address, 
+                        self.uvcAddress_items[self.uvcCam03_Address.currentIndex()])
+            
+        elif terms == "Cam04CheckEnable":
+            print(self.uvcCam04_Enabled.isChecked())
+            qconfig.set(self.configItems.uvcCam04_Enabled, self.uvcCam04_Enabled.isChecked())
+            self.uvcCam04_Address.setEnabled(self.uvcCam04_Enabled.isChecked())
+        elif terms == "Cam04AddressChange":
+            print(self.uvcCam04_Address.currentIndex())
+            qconfig.set(self.configItems.uvcCam04_Address, 
+                        self.uvcAddress_items[self.uvcCam04_Address.currentIndex()])
+
+    @pyqtSlot()
+    @threaded_func
+    def updateStatus(self):
+        self.checkButton.setEnabled(False)
+        self.detailButton.setEnabled(False)
+        self.checkLabel.setText(self.tr("Checking Connection: "))
+        self.checkLabel.adjustSize()
+        self.checkingBar.show()
+
+        start_time = time.time()
+        self.connectionStatus = True
+        with ThreadPoolExecutor(max_workers=5) as pool:
+            if qconfig.get(self.configItems.uvcCam00_Enabled):
+                self.resultCam00 = pool.submit(self.checkCamConnection,
+                    qconfig.get(self.configItems.mjpgServerAddress) + 
+                    qconfig.get(self.configItems.uvcCam00_Address)).result()
+            else: self.resultCam00 = {"connectionStatus": "None"}
+
+            if qconfig.get(self.configItems.uvcCam01_Enabled):
+                self.resultCam01 = pool.submit(self.checkCamConnection,
+                    qconfig.get(self.configItems.mjpgServerAddress) + 
+                    qconfig.get(self.configItems.uvcCam01_Address)).result()
+            else: self.resultCam01 = {"connectionStatus": "None"}
+
+            if qconfig.get(self.configItems.uvcCam02_Enabled):
+                self.resultCam02 = pool.submit(self.checkCamConnection,
+                    qconfig.get(self.configItems.mjpgServerAddress) + 
+                    qconfig.get(self.configItems.uvcCam02_Address)).result()
+            else: self.resultCam02 = {"connectionStatus": "None"}
+
+            if qconfig.get(self.configItems.uvcCam03_Enabled):
+                self.resultCam03 = pool.submit(self.checkCamConnection,
+                    qconfig.get(self.configItems.mjpgServerAddress) + 
+                    qconfig.get(self.configItems.uvcCam03_Address)).result()
+            else: self.resultCam03 = {"connectionStatus": "None"}
+
+            if qconfig.get(self.configItems.uvcCam04_Enabled):
+                self.resultCam04 = pool.submit(self.checkCamConnection,
+                    qconfig.get(self.configItems.mjpgServerAddress) + 
+                    qconfig.get(self.configItems.uvcCam04_Address)).result()
+            else: self.resultCam04 = {"connectionStatus": "None"}
+        loop = QEventLoop()
+        QTimer.singleShot(int(max((1 - time.time() + start_time) * 1000, 0)), loop.quit)
+        loop.exec_()
+
+        print(self.connectionStatus)
+        self.checkingBar.hide()
+        if self.connectionStatus:
+            self.checkLabel.setText(self.tr("Connection Status: Success!"))
+        else: 
+            self.checkLabel.setText(self.tr("Connection Status: Failed! "))
+        
+        self.checkButton.setEnabled(True)
+        self.detailButton.setEnabled(True)
+        self.checkLabel.adjustSize()
+        self._adjustViewSize()
+
+    def __viewConDetail(self):
+        w = cameraConDetailBox(
+            [self.resultCam00, self.resultCam01, self.resultCam02, 
+             self.resultCam03, self.resultCam04],
+            self.window())
+        w.show()
+        w.autoResize_TextBrowser(w.uvcCam00_Text)
+        w.autoResize_TextBrowser(w.uvcCam01_Text)
+        w.autoResize_TextBrowser(w.uvcCam02_Text)
+        w.autoResize_TextBrowser(w.uvcCam03_Text)
+        w.autoResize_TextBrowser(w.uvcCam04_Text)
 
     def __updateItems(self):
         self.mjpgStreamer_Address.setText(qconfig.get(self.configItems.mjpgServerAddress))
         self.mjpgStreamer_Address.setPlaceholderText(qconfig.get(self.configItems.mjpgServerAddress))
         self.mjpgStreamer_Address.setClearButtonEnabled(True)
+
+        self.uvcCam00_Enabled.setChecked(qconfig.get(self.configItems.uvcCam00_Enabled))
+        self.uvcCam01_Enabled.setChecked(qconfig.get(self.configItems.uvcCam01_Enabled))
+        self.uvcCam02_Enabled.setChecked(qconfig.get(self.configItems.uvcCam02_Enabled))
+        self.uvcCam03_Enabled.setChecked(qconfig.get(self.configItems.uvcCam03_Enabled))
+        self.uvcCam04_Enabled.setChecked(qconfig.get(self.configItems.uvcCam04_Enabled))
+
+        self.uvcCam00_Address.setEnabled(qconfig.get(self.configItems.uvcCam00_Enabled))
+        self.uvcCam01_Address.setEnabled(qconfig.get(self.configItems.uvcCam01_Enabled))
+        self.uvcCam02_Address.setEnabled(qconfig.get(self.configItems.uvcCam02_Enabled))
+        self.uvcCam03_Address.setEnabled(qconfig.get(self.configItems.uvcCam03_Enabled))
+        self.uvcCam04_Address.setEnabled(qconfig.get(self.configItems.uvcCam04_Enabled))
+
+        self.uvcCam00_Address.setCurrentIndex(
+            self.uvcAddress_items.index(qconfig.get(self.configItems.uvcCam00_Address)))
+        self.uvcCam01_Address.setCurrentIndex(
+            self.uvcAddress_items.index(qconfig.get(self.configItems.uvcCam01_Address)))
+        self.uvcCam02_Address.setCurrentIndex(
+            self.uvcAddress_items.index(qconfig.get(self.configItems.uvcCam02_Address)))
+        self.uvcCam03_Address.setCurrentIndex(
+            self.uvcAddress_items.index(qconfig.get(self.configItems.uvcCam03_Address)))
+        self.uvcCam04_Address.setCurrentIndex(
+            self.uvcAddress_items.index(qconfig.get(self.configItems.uvcCam04_Address)))
 
     def __initLayout(self):
         self.mjpgStreamer_Layout.setContentsMargins(48, 18, 44, 18)
@@ -423,8 +647,8 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.uvcCam04_Layout.addWidget(self.uvcCam04_Address, 0, Qt.AlignRight)
 
         self.checkLayout.setContentsMargins(48, 18, 44, 18)
-        self.checkLayout.addWidget(self.checkLabel, 0, Qt.AlignLeft)
-        self.checkLayout.addWidget(self.checkingBar, 0, Qt.AlignLeft)
+        self.checkLayout.addWidget(self.checkLabel, 0, Qt.AlignLeft | Qt.AlignCenter)
+        self.checkLayout.addWidget(self.checkingBar, 0, Qt.AlignLeft | Qt.AlignCenter)
         self.checkLayout.addStretch()
         self.checkLayout.addWidget(self.detailButton, 0, Qt.AlignRight)
         self.checkLayout.addWidget(self.checkButton, 0, Qt.AlignRight)
@@ -437,6 +661,66 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.addGroupWidget(self.uvc_cam03)
         self.addGroupWidget(self.uvc_cam04)
         self.addGroupWidget(self.checkWidget)
+
+class cameraConDetailBox(MessageBoxBase):
+    def __init__(self, resultCam: list, parent=None):
+        super().__init__(parent)
+        
+        self.titleLabel = SubtitleLabel(self.tr('Cameras Connection Details'), self)
+        
+        self.scrollArea = SingleDirectionScrollArea(self, orient=Qt.Vertical)
+        self.scrollArea.setWidgetResizable(True)
+        
+        self.InfoWidget = QWidget(self)
+        self.InfoLayout = QVBoxLayout(self.InfoWidget)
+
+        self.uvcCam00 = BodyLabel(self.tr("Connection Status for UVC Camera 01"))
+        self.uvcCam00_Text = TextBrowser()
+        self.uvcCam00_Text.setText(json.dumps(resultCam[0], indent=4, ensure_ascii=False))
+        # self.uvcCam00_Text.setMarkdown(json.dumps(resultCam00, indent=4, ensure_ascii=False))
+
+        self.uvcCam01 = BodyLabel(self.tr("Connection Status for UVC Camera 02"))
+        self.uvcCam01_Text = TextBrowser()
+        self.uvcCam01_Text.setText(json.dumps(resultCam[1], indent=4, ensure_ascii=False))
+
+        self.uvcCam02 = BodyLabel(self.tr("Connection Status for UVC Camera 03"))
+        self.uvcCam02_Text = TextBrowser()
+        self.uvcCam02_Text.setText(json.dumps(resultCam[2], indent=4, ensure_ascii=False))
+
+        self.uvcCam03 = BodyLabel(self.tr("Connection Status for UVC Camera 04"))
+        self.uvcCam03_Text = TextBrowser()
+        self.uvcCam03_Text.setText(json.dumps(resultCam[3], indent=4, ensure_ascii=False))
+
+        self.uvcCam04 = BodyLabel(self.tr("Connection Status for UVC Camera 05"))
+        self.uvcCam04_Text = TextBrowser()
+        self.uvcCam04_Text.setText(json.dumps(resultCam[4], indent=4, ensure_ascii=False))
+        
+        self.viewLayout.addWidget(self.titleLabel)
+        
+        self.InfoLayout.addWidget(self.uvcCam00)
+        self.InfoLayout.addWidget(self.uvcCam00_Text)
+        self.InfoLayout.addWidget(self.uvcCam01)
+        self.InfoLayout.addWidget(self.uvcCam01_Text)
+        self.InfoLayout.addWidget(self.uvcCam02)
+        self.InfoLayout.addWidget(self.uvcCam02_Text)
+        self.InfoLayout.addWidget(self.uvcCam03)
+        self.InfoLayout.addWidget(self.uvcCam03_Text)
+        self.InfoLayout.addWidget(self.uvcCam04)
+        self.InfoLayout.addWidget(self.uvcCam04_Text)
+
+        self.scrollArea.setWidget(self.InfoWidget)
+        self.scrollArea.enableTransparentBackground()
+        self.viewLayout.addWidget(self.scrollArea)
+        
+        self.widget.setMinimumWidth(450)
+
+    @staticmethod
+    def autoResize_TextBrowser(text_browser: TextBrowser):
+        # Calculate the height based on document content
+        doc = text_browser.document()
+        margins = text_browser.contentsMargins()
+        total_height = doc.size().height() + margins.top() + margins.bottom()
+        text_browser.setFixedHeight(int(total_height + 0.5))  # Round to nearest integer
 
 class SettingInterface(ScrollArea):
     """ Setting interface """
@@ -482,7 +766,7 @@ class SettingInterface(ScrollArea):
             cfg,
             FIF.CAMERA,
             self.tr("ROV Cameras Connnection"),
-            self.tr("Modify and test for the 5 cameras on the ROV using HTTP Stream Protocol"),
+            self.tr("Modify settings and test connection for the 5 cameras on the ROV using HTTP Stream Protocol"),
             self.rovConnectGroup
         )
 
@@ -643,6 +927,7 @@ class SettingInterface(ScrollArea):
         InfoBar.success(
             self.tr('Updated successfully'),
             self.tr('Configuration takes effect after restart'),
+            position=InfoBarPosition.BOTTOM_LEFT,
             duration=3000,
             parent=self
         )

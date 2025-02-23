@@ -12,6 +12,7 @@ SSH_ADDRESS = "192.168.137.102"
 SSH_PORT = 22
 SSH_USERNAME = "rov"
 SSH_PASSWORD = "Aa123456"
+MJPG_SERVER = "http://192.168.137.102:8080"
 
 # Basic Configuration
 YEAR = "2024-2025"
@@ -57,6 +58,29 @@ class Config(QConfig):
         "ROV_Connection", "sshUsername", SSH_USERNAME)
     sshPassword = ConfigItem(
         "ROV_Connection", "sshPassword", SSH_PASSWORD)
+    
+    mjpgServerAddress = ConfigItem(
+        "ROV_Connection/MJPG_Server", "Address", MJPG_SERVER)
+    uvcCam00_Enabled = ConfigItem(
+        "ROV_Connection/UVC_Cam00", "Enable", True, BoolValidator())
+    uvcCam00_Address = ConfigItem(
+        "ROV_Connection/UVC_Cam00", "Address", "/?action=stream_0")
+    uvcCam01_Enabled = ConfigItem(
+        "ROV_Connection/UVC_Cam01", "Enable", True, BoolValidator())
+    uvcCam01_Address = ConfigItem(
+        "ROV_Connection/UVC_Cam01", "Address", "/?action=stream_1")
+    uvcCam02_Enabled = ConfigItem(
+        "ROV_Connection/UVC_Cam02", "Enable", True, BoolValidator())
+    uvcCam02_Address = ConfigItem(
+        "ROV_Connection/UVC_Cam02", "Address", "/?action=stream_2")
+    uvcCam03_Enabled = ConfigItem(
+        "ROV_Connection/UVC_Cam03", "Enable", True, BoolValidator())
+    uvcCam03_Address = ConfigItem(
+        "ROV_Connection/UVC_Cam03", "Address", "/?action=stream_3")
+    uvcCam04_Enabled = ConfigItem(
+        "ROV_Connection/UVC_Cam04", "Enable", True, BoolValidator())
+    uvcCam04_Address = ConfigItem(
+        "ROV_Connection/UVC_Cam04", "Address", "/?action=stream_4")
 
     # folders
     # musicFolders = ConfigItem(
