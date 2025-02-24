@@ -96,6 +96,7 @@ class MainWindow(FluentWindow):
     def initWindow(self):
         self.resize(960, 780)
         self.setMinimumWidth(760)
+        self.setMinimumHeight(320)
         self.setWindowIcon(QIcon(':/gallery/images/logo.png'))
         self.setWindowTitle('PyQt-Fluent-Widgets')
 
