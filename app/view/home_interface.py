@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 from qfluentwidgets import ScrollArea, isDarkTheme, FluentIcon
 from ..common.config import cfg, HELP_URL, REPO_URL, EXAMPLE_URL, FEEDBACK_URL
-from ..common.icon import Icon, FluentIconBase
 from ..components.link_card import LinkCardView
 from ..components.sample_card import SampleCardView
 from ..common.style_sheet import StyleSheet
@@ -19,7 +18,7 @@ class BannerWidget(QWidget):
         self.setFixedHeight(336)
 
         self.vBoxLayout = QVBoxLayout(self)
-        self.galleryLabel = QLabel('Fluent Gallery', self)
+        self.galleryLabel = QLabel('ROV Control Planel', self)
         self.banner = QPixmap(':/gallery/images/header1.png')
         self.linkCardView = LinkCardView(self)
 
@@ -34,7 +33,7 @@ class BannerWidget(QWidget):
         self.linkCardView.addCard(
             ':/gallery/images/logo.png',
             self.tr('Getting started'),
-            self.tr('An overview of app development options and samples.'),
+            self.tr('An overview of app development options and guideline for using this App'),
             HELP_URL
         )
 
@@ -42,22 +41,22 @@ class BannerWidget(QWidget):
             FluentIcon.GITHUB,
             self.tr('GitHub repo'),
             self.tr(
-                'The latest fluent design controls and styles for your applications.'),
+                'Include the Source Code and the Report for the whole ROV System, ROV Control Panel'),
             REPO_URL
         )
 
-        self.linkCardView.addCard(
-            FluentIcon.CODE,
-            self.tr('Code samples'),
-            self.tr(
-                'Find samples that demonstrate specific tasks, features and APIs.'),
-            EXAMPLE_URL
-        )
+        # self.linkCardView.addCard(
+        #     FluentIcon.CODE,
+        #     self.tr('Code samples'),
+        #     self.tr(
+        #         'Find samples that demonstrate specific tasks, features and APIs.'),
+        #     EXAMPLE_URL
+        # )
 
         self.linkCardView.addCard(
             FluentIcon.FEEDBACK,
             self.tr('Send feedback'),
-            self.tr('Help us improve PyQt-Fluent-Widgets by providing feedback.'),
+            self.tr('Help us improve ROV System or ROV Control Panel by providing feedback or create Issue.'),
             FEEDBACK_URL
         )
 
@@ -106,7 +105,7 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout = QVBoxLayout(self.view)
 
         self.__initWidget()
-        self.loadSamples()
+        # self.loadSamples()
 
     def __initWidget(self):
         self.view.setObjectName('view')

@@ -31,7 +31,7 @@ locale = cfg.get(cfg.language).value
 translator = FluentTranslator(locale)
 
 appTranslator = QTranslator()
-appTranslator.load(locale, "app", ".", "./app/resource/i18n")
+appTranslator.load(locale, "app", ".", ":/gallery/i18n")
 
 app.installTranslator(translator)
 app.installTranslator(appTranslator)
