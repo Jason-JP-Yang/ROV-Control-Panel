@@ -94,6 +94,9 @@ class Config(QConfig):
         "MainWindow", "DpiScale", "Auto", OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]), restart=True)
     language = OptionsConfigItem(
         "MainWindow", "Language", Language.AUTO, OptionsValidator(Language), LanguageSerializer(), restart=True)
+    IconStyle = OptionsConfigItem(
+        "MainWindow", "DpiScale", "Classic Solid", OptionsValidator(["Classic Solid", 
+        "Classic Regular", "Sharp Solid", "Sharp Regular"]), restart=True)
 
     # Material
     # blurRadius  = RangeConfigItem("Material", "AcrylicBlurRadius", 15, RangeValidator(0, 40))
