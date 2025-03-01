@@ -186,7 +186,7 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         self.worker.stop()
         self.thread.quit()
-        self.thread.wait()
+        # self.thread.wait()
         super().closeEvent(event)
 
 if __name__ == "__main__":
