@@ -13,7 +13,6 @@ from .setting_interface import SettingInterface
 
 from ..common.config import cfg
 from ..common.signal_bus import signalBus
-from ..common.translator import Translator
 from ..common import resource
 
 import time
@@ -62,7 +61,6 @@ class MainWindow(FluentWindow):
 
     def initNavigation(self):
         # add navigation items
-        t = Translator()
         self.addSubInterface(self.homeInterface, FIF.HOME, self.tr('Home'))
         # self.addSubInterface(self.iconInterface, Icon.EMOJI_TAB_SYMBOLS, t.icons)
         self.navigationInterface.addSeparator()
