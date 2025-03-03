@@ -10,13 +10,12 @@ from qfluentwidgets import FluentIcon as FIF
 # from .gallery_interface import GalleryInterface
 from .home_interface import HomeInterface
 from .setting_interface import SettingInterface
+from ..components.page_frame import Widget as PageFrame
 
 from ..common.config import cfg
 from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
-
-import time
 
 class MainWindow(FluentWindow):
 
@@ -29,19 +28,24 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
-        # self.iconInterface = IconInterface(self)
-        # self.basicInputInterface = BasicInputInterface(self)
-        # self.dateTimeInterface = DateTimeInterface(self)
-        # self.dialogInterface = DialogInterface(self)
-        # self.layoutInterface = LayoutInterface(self)
-        # self.menuInterface = MenuInterface(self)
-        # self.materialInterface = MaterialInterface(self)
-        # self.navigationViewInterface = NavigationViewInterface(self)
-        # self.scrollInterface = ScrollInterface(self)
-        # self.statusInfoInterface = StatusInfoInterface(self)
         self.settingInterface = SettingInterface(self)
-        # self.textInterface = TextInterface(self)
-        # self.viewInterface = ViewInterface(self)
+        
+        self.driverWindow = PageFrame("Pilot - Driver Interface")
+        self.operatorWindow = PageFrame("Pilot - Operator Interface")
+
+        self.sshInterface = PageFrame("SSH Control Panel - ROV Connection")
+        self.cmdInterface = PageFrame("Command Line Config Interface")
+
+        self.InIOInterface = PageFrame("Input Signal Panel - Controller")
+        self.armInterface = PageFrame("Machine Arm Control Panel")
+        self.sensorsInterface = PageFrame("ROV Sensors Control Panel")
+        
+        self.camerasInterface = PageFrame("Cameras Interface - Summarize")
+        self.cam00Interface = PageFrame("Cameras Interface - UVC_CAM_01")
+        self.cam01Interface = PageFrame("Cameras Interface - UVC_CAM_02")
+        self.cam02Interface = PageFrame("Cameras Interface - UVC_CAM_03")
+        self.cam03Interface = PageFrame("Cameras Interface - UVC_CAM_04")
+        self.cam04Interface = PageFrame("Cameras Interface - UVC_CAM_05")
 
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
@@ -62,12 +66,25 @@ class MainWindow(FluentWindow):
 
     def initNavigation(self):
         # add navigation items
-        t = Translator()
+        # t = Translator()
         self.addSubInterface(self.homeInterface, FIF.HOME, self.tr('Home'))
+        self.addSubInterface(self.driverWindow, FIF.ALBUM, self.tr("ROV Driver Interface"))
+        self.addSubInterface(self.operatorWindow, FIF.ALBUM, self.tr("ROV Operator Interface"))
         # self.addSubInterface(self.iconInterface, Icon.EMOJI_TAB_SYMBOLS, t.icons)
         self.navigationInterface.addSeparator()
-
+        
         pos = NavigationItemPosition.SCROLL
+        self.addSubInterface(self.sshInterface, FIF.ALBUM, self.tr("SSH Connect Interface"), pos)
+        self.addSubInterface(self.cmdInterface, FIF.ALBUM, self.tr("Command Logs Interface"), pos)
+        self.addSubInterface(self.InIOInterface, FIF.ALBUM, self.tr("Input Signals Panel"), pos)
+        
+        self.addSubInterface(self.camerasInterface, FIF.CAMERA, self.tr("Cameras Interface"), pos)
+        self.addSubInterface(self.cam00Interface, FIF.CAMERA, self.tr("UVC Camera 01"), pos, self.camerasInterface)
+        self.addSubInterface(self.cam01Interface, FIF.CAMERA, self.tr("UVC Camera 02"), pos, self.camerasInterface)
+        self.addSubInterface(self.cam02Interface, FIF.CAMERA, self.tr("UVC Camera 03"), pos, self.camerasInterface)
+        self.addSubInterface(self.cam03Interface, FIF.CAMERA, self.tr("UVC Camera 04"), pos, self.camerasInterface)
+        self.addSubInterface(self.cam04Interface, FIF.CAMERA, self.tr("UVC Camera 05"), pos, self.camerasInterface)
+        
         # self.addSubInterface(self.basicInputInterface, FIF.CHECKBOX,t.basicInput, pos)
         # self.addSubInterface(self.dateTimeInterface, FIF.DATE_TIME, t.dateTime, pos)
         # self.addSubInterface(self.dialogInterface, FIF.MESSAGE, t.dialogs, pos)
@@ -98,7 +115,7 @@ class MainWindow(FluentWindow):
         self.setMinimumWidth(760)
         self.setMinimumHeight(320)
         self.setWindowIcon(QIcon(':/gallery/images/logo.png'))
-        self.setWindowTitle('PyQt-Fluent-Widgets')
+        self.setWindowTitle('ROV Control Panel')
 
         self.setMicaEffectEnabled(cfg.get(cfg.micaEnabled))
 
