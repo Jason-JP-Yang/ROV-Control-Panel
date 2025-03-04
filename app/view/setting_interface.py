@@ -16,6 +16,7 @@ from ..components.custom_cam_setting_card import CustomCameraSettingCard
 from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, RELEASE_URL, isWin11
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
+from ..common.icon import Icon as AppIcon
 
 class SettingInterface(ScrollArea):
     """ Setting interface """

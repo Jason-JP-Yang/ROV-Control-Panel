@@ -15,4 +15,9 @@
         <file>i18n\app.zh_HK.qm</file>
 
     </qresource>
+
+    <qresource prefix="/icon">
+        <file alias="solid_camera_black">images/icons/camera_black.svg</file>
+        <file alias="solid_camera_white">images/icons/camera_white.svg</file>
+    </qresource>
 </RCC>
