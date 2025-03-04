@@ -1,0 +1,14 @@
+{
+    "qrc_path": "./resource.qrc",
+    "resource_py_path": "../common/resource.py",
+    "prefixes": [
+        {
+            "prefix": "/gallery",
+            "dirs": [
+                "./images",
+                "./qss/",
+                "./i18n"
+            ]
+        }
+    ]
+}
