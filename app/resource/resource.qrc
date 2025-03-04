@@ -15,9 +15,24 @@
         <file>i18n\app.zh_HK.qm</file>
 
     </qresource>
+    <qresource prefix="/icons">
+        <file>icons\camera\regular_black.svg</file>
+        <file>icons\camera\regular_white.svg</file>
+        <file>icons\camera\s-regular_black.svg</file>
+        <file>icons\camera\s-regular_white.svg</file>
+        <file>icons\camera\s-solid_black.svg</file>
+        <file>icons\camera\s-solid_white.svg</file>
+        <file>icons\camera\solid_black.svg</file>
+        <file>icons\camera\solid_white.svg</file>
 
-    <qresource prefix="/icon">
-        <file alias="solid_camera_black">images/icons/camera_black.svg</file>
-        <file alias="solid_camera_white">images/icons/camera_white.svg</file>
+        <file>icons\ethernet\regular_black.svg</file>
+        <file>icons\ethernet\regular_white.svg</file>
+        <file>icons\ethernet\s-regular_black.svg</file>
+        <file>icons\ethernet\s-regular_white.svg</file>
+        <file>icons\ethernet\s-solid_black.svg</file>
+        <file>icons\ethernet\s-solid_white.svg</file>
+        <file>icons\ethernet\solid_black.svg</file>
+        <file>icons\ethernet\solid_white.svg</file>
+
     </qresource>
 </RCC>

@@ -8,6 +8,7 @@ from .config import cfg, qconfig
 class Icon(FluentIconBase, Enum):
 
     CAMERA = "camera"
+    ETHERNET = "ethernet"
 
     def path(self, theme=Theme.AUTO):
         IconStyle = qconfig.get(cfg.IconStyle)
@@ -16,4 +17,4 @@ class Icon(FluentIconBase, Enum):
         elif IconStyle == "Sharp Solid": IconStyle = "s-solid"
         elif IconStyle == "Sharp Regular": IconStyle = "s-regular"
 
-        return f":icon/{IconStyle}_{self.value}_{getIconColor(theme)}"
+        return f":icons/icons/{self.value}/{IconStyle}_{getIconColor(theme)}.svg"

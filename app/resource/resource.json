@@ -9,6 +9,13 @@
                 "./qss/",
                 "./i18n"
             ]
+        },
+        {
+            "prefix": "/icons",
+            "dirs": [
+                "./icons/camera",
+                "./icons/ethernet"
+            ]
         }
     ]
 }

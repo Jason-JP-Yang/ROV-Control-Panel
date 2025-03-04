@@ -52,7 +52,7 @@ class SettingInterface(ScrollArea):
             self.tr('ROV Connection'), self.scrollWidget)
         self.sshconfig = CustomSSHSettingCard(
             cfg,
-            FIF.CERTIFICATE,
+            AppIcon.ETHERNET,
             self.tr("ROV SSH Connection"),
             self.tr("Configure the connection between ROV and computer using SSH Protocol"), 
             self.rovConnectGroup
@@ -60,7 +60,7 @@ class SettingInterface(ScrollArea):
         self.sshconfig.sshUpdated.connect(self.__ssh_pop_infoBar)
         self.camconfig = CustomCameraSettingCard(
             cfg,
-            FIF.CAMERA,
+            AppIcon.CAMERA,
             self.tr("ROV Cameras Connnection"),
             self.tr("Modify settings and test connection for the 5 cameras on the ROV using HTTP Stream Protocol"),
             self.rovConnectGroup
@@ -111,6 +111,14 @@ class SettingInterface(ScrollArea):
             self.tr('Language'),
             self.tr('Set your preferred language for UI'),
             texts=['简体中文', '繁體中文', 'English', self.tr('Use system setting')],
+            parent=self.personalGroup
+        )
+        self.iconstyleCard = ComboBoxSettingCard(
+            cfg.IconStyle,
+            FIF.EMOJI_TAB_SYMBOLS,
+            self.tr("Application Icon Style"),
+            self.tr("Change the style of the application icons"),
+            texts=["Classic Solid", "Classic Regular", "Sharp Solid", "Sharp Regular"],
             parent=self.personalGroup
         )
 
@@ -178,6 +186,8 @@ class SettingInterface(ScrollArea):
         self.settingLabel.setObjectName('settingLabel')
         StyleSheet.SETTING_INTERFACE.apply(self)
 
+        self.iconstyleCard.comboBox.setFixedWidth(160)
+
         self.micaCard.setEnabled(isWin11())
 
         # initialize layout
@@ -199,6 +209,7 @@ class SettingInterface(ScrollArea):
         self.personalGroup.addSettingCard(self.themeColorCard)
         self.personalGroup.addSettingCard(self.zoomCard)
         self.personalGroup.addSettingCard(self.languageCard)
+        self.personalGroup.addSettingCard(self.iconstyleCard)
 
         # self.materialGroup.addSettingCard(self.blurRadiusCard)
 
