@@ -9,6 +9,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout
 
 from ..common.config import Config
+from ..common.icon import Icon as AppIcon, get_IconLabel
 from ..common.threading_func import threaded_func
 
 import time, json
@@ -40,31 +41,41 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
 
         self.uvc_cam00 = QWidget(self)
         self.uvcCam00_Layout = QHBoxLayout(self.uvc_cam00)
+        self.uvcCam00_vLayout = QVBoxLayout(self.uvc_cam00)
         self.uvcCam00_Label = QLabel(self.tr("UVC Camera 01: Left Machine Arm"), self.uvc_cam00)
+        self.uvcCam00_Content = QLabel(self.tr("140 degree of field of view, used for close-up view of the left machine arm."), self.uvc_cam00)
         self.uvcCam00_Enabled = SwitchButton(self.uvc_cam00)
         self.uvcCam00_Address = ComboBox(self.uvc_cam00)
 
         self.uvc_cam01 = QWidget(self)
         self.uvcCam01_Layout = QHBoxLayout(self.uvc_cam01)
+        self.uvcCam01_vLayout = QVBoxLayout(self.uvc_cam01)
         self.uvcCam01_Label = QLabel(self.tr("UVC Camera 02: Right Machine Arm"), self.uvc_cam01)
+        self.uvcCam01_Content = QLabel(self.tr("140 degree of field of view, used for close-up view of the right machine arm."), self.uvc_cam01)
         self.uvcCam01_Enabled = SwitchButton(self.uvc_cam01)
         self.uvcCam01_Address = ComboBox(self.uvc_cam01)
 
         self.uvc_cam02 = QWidget(self)
         self.uvcCam02_Layout = QHBoxLayout(self.uvc_cam02)
+        self.uvcCam02_vLayout = QVBoxLayout(self.uvc_cam02)
         self.uvcCam02_Label = QLabel(self.tr("UVC Camera 03: Left Forward Viewing Eye"), self.uvc_cam02)
+        self.uvcCam02_Content = QLabel(self.tr("120 degree of field of view, used for measurement in stereo vision (LEFT)."), self.uvc_cam02)
         self.uvcCam02_Enabled = SwitchButton(self.uvc_cam02)
         self.uvcCam02_Address = ComboBox(self.uvc_cam02)
 
         self.uvc_cam03 = QWidget(self)
         self.uvcCam03_Layout = QHBoxLayout(self.uvc_cam03)
+        self.uvcCam03_vLayout = QVBoxLayout(self.uvc_cam03)
         self.uvcCam03_Label = QLabel(self.tr("UVC Camera 04: Right Forward Viewing Eye"), self.uvc_cam03)
+        self.uvcCam03_Content = QLabel(self.tr("120 degree of field of view, used for measurement in stereo vision (RIGHT)."), self.uvc_cam03)
         self.uvcCam03_Enabled = SwitchButton(self.uvc_cam03)
         self.uvcCam03_Address = ComboBox(self.uvc_cam03)
 
         self.uvc_cam04 = QWidget(self)
         self.uvcCam04_Layout = QHBoxLayout(self.uvc_cam04)
+        self.uvcCam04_vLayout = QVBoxLayout(self.uvc_cam04)
         self.uvcCam04_Label = QLabel(self.tr("UVC Camera 05: Backward Viewing Eye"),self.uvc_cam04)
+        self.uvcCam04_Content = QLabel(self.tr("165 degree lagre field of view, monitoring the whole ROV for pilot."), self.uvc_cam04)
         self.uvcCam04_Enabled = SwitchButton(self.uvc_cam04)
         self.uvcCam04_Address = ComboBox(self.uvc_cam04)
 
@@ -84,10 +95,15 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
 
         self.mjpgStreamer_Label.setObjectName("titleLabel")
         self.uvcCam00_Label.setObjectName("titleLabel")
+        self.uvcCam00_Content.setObjectName('contentLabel')
         self.uvcCam01_Label.setObjectName("titleLabel")
+        self.uvcCam01_Content.setObjectName('contentLabel')
         self.uvcCam02_Label.setObjectName("titleLabel")
+        self.uvcCam02_Content.setObjectName('contentLabel')
         self.uvcCam03_Label.setObjectName("titleLabel")
+        self.uvcCam03_Content.setObjectName('contentLabel')
         self.uvcCam04_Label.setObjectName("titleLabel")
+        self.uvcCam04_Content.setObjectName('contentLabel')
         self.checkLabel.setObjectName("titleLabel")
 
         self.uvcCam00_Address.addItems(self.uvcAddress_items)
@@ -331,7 +347,12 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.mjpgStreamer_Layout.addWidget(self.editButton, 0, Qt.AlignRight)
 
         self.uvcCam00_Layout.setContentsMargins(48, 18, 44, 18)
-        self.uvcCam00_Layout.addWidget(self.uvcCam00_Label, 0, Qt.AlignLeft)
+        self.uvcCam00_Layout.addWidget(get_IconLabel(AppIcon.WEB_CAMERA, (20, 22)), 0, Qt.AlignLeft)
+        self.uvcCam00_Layout.addSpacing(8)
+        self.uvcCam00_vLayout.setSpacing(0)
+        self.uvcCam00_vLayout.addWidget(self.uvcCam00_Label, 0, Qt.AlignLeft)
+        self.uvcCam00_vLayout.addWidget(self.uvcCam00_Content, 0, Qt.AlignLeft)
+        self.uvcCam00_Layout.addLayout(self.uvcCam00_vLayout)
         self.uvcCam00_Layout.addStretch()
         self.uvcCam00_Layout.addWidget(self.uvcCam00_Enabled, 0, Qt.AlignRight)
         self.uvcCam00_Layout.addSpacing(15)
@@ -339,7 +360,12 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.uvcCam00_Layout.addWidget(self.uvcCam00_Address, 0, Qt.AlignRight)
 
         self.uvcCam01_Layout.setContentsMargins(48, 18, 44, 18)
-        self.uvcCam01_Layout.addWidget(self.uvcCam01_Label, 0, Qt.AlignLeft)
+        self.uvcCam01_Layout.addWidget(get_IconLabel(AppIcon.WEB_CAMERA, (20, 22)), 0, Qt.AlignLeft)
+        self.uvcCam01_Layout.addSpacing(8)
+        self.uvcCam01_vLayout.setSpacing(0)
+        self.uvcCam01_vLayout.addWidget(self.uvcCam01_Label, 0, Qt.AlignLeft)
+        self.uvcCam01_vLayout.addWidget(self.uvcCam01_Content, 0, Qt.AlignLeft)
+        self.uvcCam01_Layout.addLayout(self.uvcCam01_vLayout)
         self.uvcCam01_Layout.addStretch()
         self.uvcCam01_Layout.addWidget(self.uvcCam01_Enabled, 0, Qt.AlignRight)
         self.uvcCam01_Layout.addSpacing(15)
@@ -347,7 +373,12 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.uvcCam01_Layout.addWidget(self.uvcCam01_Address, 0, Qt.AlignRight)
 
         self.uvcCam02_Layout.setContentsMargins(48, 18, 44, 18)
-        self.uvcCam02_Layout.addWidget(self.uvcCam02_Label, 0, Qt.AlignLeft)
+        self.uvcCam02_Layout.addWidget(get_IconLabel(AppIcon.WEB_CAMERA, (20, 22)), 0, Qt.AlignLeft)
+        self.uvcCam02_Layout.addSpacing(8)
+        self.uvcCam02_vLayout.setSpacing(0)
+        self.uvcCam02_vLayout.addWidget(self.uvcCam02_Label, 0, Qt.AlignLeft)
+        self.uvcCam02_vLayout.addWidget(self.uvcCam02_Content, 0, Qt.AlignLeft)
+        self.uvcCam02_Layout.addLayout(self.uvcCam02_vLayout)
         self.uvcCam02_Layout.addStretch()
         self.uvcCam02_Layout.addWidget(self.uvcCam02_Enabled, 0, Qt.AlignRight)
         self.uvcCam02_Layout.addSpacing(15)
@@ -355,7 +386,12 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.uvcCam02_Layout.addWidget(self.uvcCam02_Address, 0, Qt.AlignRight)
 
         self.uvcCam03_Layout.setContentsMargins(48, 18, 44, 18)
-        self.uvcCam03_Layout.addWidget(self.uvcCam03_Label, 0, Qt.AlignLeft)
+        self.uvcCam03_Layout.addWidget(get_IconLabel(AppIcon.WEB_CAMERA, (20, 22)), 0, Qt.AlignLeft)
+        self.uvcCam03_Layout.addSpacing(8)
+        self.uvcCam03_vLayout.setSpacing(0)
+        self.uvcCam03_vLayout.addWidget(self.uvcCam03_Label, 0, Qt.AlignLeft)
+        self.uvcCam03_vLayout.addWidget(self.uvcCam03_Content, 0, Qt.AlignLeft)
+        self.uvcCam03_Layout.addLayout(self.uvcCam03_vLayout)
         self.uvcCam03_Layout.addStretch()
         self.uvcCam03_Layout.addWidget(self.uvcCam03_Enabled, 0, Qt.AlignRight)
         self.uvcCam03_Layout.addSpacing(15)
@@ -363,7 +399,12 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.uvcCam03_Layout.addWidget(self.uvcCam03_Address, 0, Qt.AlignRight)
 
         self.uvcCam04_Layout.setContentsMargins(48, 18, 44, 18)
-        self.uvcCam04_Layout.addWidget(self.uvcCam04_Label, 0, Qt.AlignLeft)
+        self.uvcCam04_Layout.addWidget(get_IconLabel(AppIcon.WEB_CAMERA, (20, 22)), 0, Qt.AlignLeft)
+        self.uvcCam04_Layout.addSpacing(8)
+        self.uvcCam04_vLayout.setSpacing(0)
+        self.uvcCam04_vLayout.addWidget(self.uvcCam04_Label, 0, Qt.AlignLeft)
+        self.uvcCam04_vLayout.addWidget(self.uvcCam04_Content, 0, Qt.AlignLeft)
+        self.uvcCam04_Layout.addLayout(self.uvcCam04_vLayout)
         self.uvcCam04_Layout.addStretch()
         self.uvcCam04_Layout.addWidget(self.uvcCam04_Enabled, 0, Qt.AlignRight)
         self.uvcCam04_Layout.addSpacing(15)
@@ -371,6 +412,8 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.uvcCam04_Layout.addWidget(self.uvcCam04_Address, 0, Qt.AlignRight)
 
         self.checkLayout.setContentsMargins(48, 18, 44, 18)
+        self.checkLayout.addWidget(get_IconLabel(AppIcon.CONNECT, (24, 20)), 0, Qt.AlignLeft)
+        self.checkLayout.addSpacing(4)
         self.checkLayout.addWidget(self.checkLabel, 0, Qt.AlignLeft | Qt.AlignCenter)
         self.checkLayout.addWidget(self.checkingBar, 0, Qt.AlignLeft | Qt.AlignCenter)
         self.checkLayout.addStretch()
@@ -385,6 +428,11 @@ class CustomCameraSettingCard(ExpandGroupSettingCard):
         self.addGroupWidget(self.uvc_cam03)
         self.addGroupWidget(self.uvc_cam04)
         self.addGroupWidget(self.checkWidget)
+    
+    def toggleExpand(self):
+        """ toggle expand status """
+        self.setExpand(not self.isExpand)
+        self._adjustViewSize()
 
 class cameraConDetailBox(MessageBoxBase):
     def __init__(self, resultCam: list, parent=None):

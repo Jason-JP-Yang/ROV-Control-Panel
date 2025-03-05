@@ -16,6 +16,7 @@ from ..common.config import cfg
 from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
+from ..common.icon import Icon as AppIcon
 
 class MainWindow(FluentWindow):
 
@@ -78,12 +79,12 @@ class MainWindow(FluentWindow):
         self.addSubInterface(self.cmdInterface, FIF.ALBUM, self.tr("Command Logs Interface"), pos)
         self.addSubInterface(self.InIOInterface, FIF.ALBUM, self.tr("Input Signals Panel"), pos)
         
-        self.addSubInterface(self.camerasInterface, FIF.CAMERA, self.tr("Cameras Interface"), pos)
-        self.addSubInterface(self.cam00Interface, FIF.CAMERA, self.tr("UVC Camera 01"), pos, self.camerasInterface)
-        self.addSubInterface(self.cam01Interface, FIF.CAMERA, self.tr("UVC Camera 02"), pos, self.camerasInterface)
-        self.addSubInterface(self.cam02Interface, FIF.CAMERA, self.tr("UVC Camera 03"), pos, self.camerasInterface)
-        self.addSubInterface(self.cam03Interface, FIF.CAMERA, self.tr("UVC Camera 04"), pos, self.camerasInterface)
-        self.addSubInterface(self.cam04Interface, FIF.CAMERA, self.tr("UVC Camera 05"), pos, self.camerasInterface)
+        self.addSubInterface(self.camerasInterface, AppIcon.CAMERA, self.tr("Cameras Interface"), pos)
+        self.addSubInterface(self.cam00Interface, AppIcon.CAMERA, self.tr("UVC Camera 01"), pos, self.camerasInterface)
+        self.addSubInterface(self.cam01Interface, AppIcon.CAMERA, self.tr("UVC Camera 02"), pos, self.camerasInterface)
+        self.addSubInterface(self.cam02Interface, AppIcon.CAMERA, self.tr("UVC Camera 03"), pos, self.camerasInterface)
+        self.addSubInterface(self.cam03Interface, AppIcon.CAMERA, self.tr("UVC Camera 04"), pos, self.camerasInterface)
+        self.addSubInterface(self.cam04Interface, AppIcon.CAMERA, self.tr("UVC Camera 05"), pos, self.camerasInterface)
         
         # self.addSubInterface(self.basicInputInterface, FIF.CHECKBOX,t.basicInput, pos)
         # self.addSubInterface(self.dateTimeInterface, FIF.DATE_TIME, t.dateTime, pos)
@@ -108,12 +109,12 @@ class MainWindow(FluentWindow):
         #     position=NavigationItemPosition.BOTTOM
         # )
         self.addSubInterface(
-            self.settingInterface, FIF.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)
+            self.settingInterface, AppIcon.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)
 
     def initWindow(self):
         self.resize(960, 780)
-        self.setMinimumWidth(760)
-        self.setMinimumHeight(320)
+        self.setMinimumWidth(960)
+        self.setMinimumHeight(780)
         self.setWindowIcon(QIcon(':/gallery/images/logo.png'))
         self.setWindowTitle('ROV Control Panel')
 

@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout
 
 from ..common.config import Config
 from ..common.threading_func import threaded_func
+from ..common.icon import get_IconLabel, Icon as AppIcon
 
 import paramiko, socket, time
 from datetime import datetime
@@ -83,6 +84,8 @@ class CustomSSHSettingCard(ExpandGroupSettingCard):
         self.Layout.setSizeConstraint(QVBoxLayout.SetMinimumSize)
 
         self.checkLayout.setContentsMargins(48, 18, 44, 18)
+        self.checkLayout.addWidget(get_IconLabel(AppIcon.CONNECT, (24, 20)), 0, Qt.AlignLeft)
+        self.checkLayout.addSpacing(4)
         self.checkLayout.addWidget(self.checkLabel, 0, Qt.AlignLeft)
         self.checkLayout.addWidget(self.checkingBar, 0, Qt.AlignLeft)
         self.checkLayout.addStretch()

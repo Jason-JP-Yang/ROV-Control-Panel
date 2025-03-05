@@ -53,7 +53,7 @@ class SettingInterface(ScrollArea):
         self.sshconfig = CustomSSHSettingCard(
             cfg,
             AppIcon.ETHERNET,
-            self.tr("ROV SSH Connection"),
+            self.tr("ROV Ethernet SSH Connection"),
             self.tr("Configure the connection between ROV and computer using SSH Protocol"), 
             self.rovConnectGroup
         )
@@ -180,6 +180,18 @@ class SettingInterface(ScrollArea):
         self.setWidget(self.scrollWidget)
         self.setWidgetResizable(True)
         self.setObjectName('settingInterface')
+
+        self.sshconfig.card.iconLabel.setFixedSize(20, 20)
+        self.camconfig.card.iconLabel.setFixedSize(20, 20)
+        self.micaCard.iconLabel.setFixedSize(20, 20)
+        self.themeCard.card.iconLabel.setFixedSize(20, 20)
+        self.themeColorCard.card.iconLabel.setFixedSize(20, 20)
+        self.zoomCard.card.iconLabel.setFixedSize(20, 20)
+        self.languageCard.iconLabel.setFixedSize(20, 20)
+        self.iconstyleCard.iconLabel.setFixedSize(20, 20)
+        self.helpCard.iconLabel.setFixedSize(20, 20)
+        self.feedbackCard.iconLabel.setFixedSize(20, 20)
+        self.aboutCard.iconLabel.setFixedSize(20, 20)
 
         # initialize style sheet
         self.scrollWidget.setObjectName('scrollWidget')

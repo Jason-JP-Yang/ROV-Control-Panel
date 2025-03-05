@@ -34,5 +34,41 @@
         <file>icons\ethernet\solid_black.svg</file>
         <file>icons\ethernet\solid_white.svg</file>
 
+        <file>icons\camera-web\regular_black.svg</file>
+        <file>icons\camera-web\regular_white.svg</file>
+        <file>icons\camera-web\s-regular_black.svg</file>
+        <file>icons\camera-web\s-regular_white.svg</file>
+        <file>icons\camera-web\s-solid_black.svg</file>
+        <file>icons\camera-web\s-solid_white.svg</file>
+        <file>icons\camera-web\solid_black.svg</file>
+        <file>icons\camera-web\solid_white.svg</file>
+
+        <file>icons\connect\regular_black.svg</file>
+        <file>icons\connect\regular_white.svg</file>
+        <file>icons\connect\s-regular_black.svg</file>
+        <file>icons\connect\s-regular_white.svg</file>
+        <file>icons\connect\s-solid_black.svg</file>
+        <file>icons\connect\s-solid_white.svg</file>
+        <file>icons\connect\solid_black.svg</file>
+        <file>icons\connect\solid_white.svg</file>
+
+        <file>icons\setting\regular_black.svg</file>
+        <file>icons\setting\regular_white.svg</file>
+        <file>icons\setting\s-regular_black.svg</file>
+        <file>icons\setting\s-regular_white.svg</file>
+        <file>icons\setting\s-solid_black.svg</file>
+        <file>icons\setting\s-solid_white.svg</file>
+        <file>icons\setting\solid_black.svg</file>
+        <file>icons\setting\solid_white.svg</file>
+
+        <file>icons\unknown\regular_black.svg</file>
+        <file>icons\unknown\regular_white.svg</file>
+        <file>icons\unknown\s-regular_black.svg</file>
+        <file>icons\unknown\s-regular_white.svg</file>
+        <file>icons\unknown\s-solid_black.svg</file>
+        <file>icons\unknown\s-solid_white.svg</file>
+        <file>icons\unknown\solid_black.svg</file>
+        <file>icons\unknown\solid_white.svg</file>
+
     </qresource>
 </RCC>

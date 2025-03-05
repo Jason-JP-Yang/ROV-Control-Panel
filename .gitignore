@@ -1,8 +1,9 @@
-# Custom Settings
+# Custom Settings: VSCODE & TEST FOLDER
 test/
 /app/config/
 checkpoints/
 .vscode/
+fontawesome-pro-icons/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
