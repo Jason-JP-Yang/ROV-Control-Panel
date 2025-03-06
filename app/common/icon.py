@@ -29,7 +29,12 @@ class Icon(FluentIconBase, Enum):
     WEB_CAMERA = "camera-web"
     CONNECT = "connect"
     SETTING = "setting"
-    UNKNOWN = "unknown"
+    SENSOR = "sensor"
+    ROUTER = "router"
+    TERMINAL = "terminal"
+    HOME = "home"
+    DHARMACHAKRA = "dharmachakra"
+    JOYSTICK = "joystick"
 
     def path(self, theme=Theme.AUTO):
         IconStyle = qconfig.get(cfg.IconStyle)

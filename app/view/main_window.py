@@ -68,16 +68,16 @@ class MainWindow(FluentWindow):
     def initNavigation(self):
         # add navigation items
         # t = Translator()
-        self.addSubInterface(self.homeInterface, FIF.HOME, self.tr('Home'))
-        self.addSubInterface(self.driverWindow, FIF.ALBUM, self.tr("ROV Driver Interface"))
-        self.addSubInterface(self.operatorWindow, FIF.ALBUM, self.tr("ROV Operator Interface"))
+        self.addSubInterface(self.homeInterface, AppIcon.HOME, self.tr('Home'))
+        self.addSubInterface(self.driverWindow, AppIcon.DHARMACHAKRA, self.tr("ROV Driver Interface"))
+        self.addSubInterface(self.operatorWindow, AppIcon.JOYSTICK, self.tr("ROV Operator Interface"))
         # self.addSubInterface(self.iconInterface, Icon.EMOJI_TAB_SYMBOLS, t.icons)
         self.navigationInterface.addSeparator()
         
         pos = NavigationItemPosition.SCROLL
-        self.addSubInterface(self.sshInterface, FIF.ALBUM, self.tr("SSH Connect Interface"), pos)
-        self.addSubInterface(self.cmdInterface, FIF.ALBUM, self.tr("Command Logs Interface"), pos)
-        self.addSubInterface(self.InIOInterface, FIF.ALBUM, self.tr("Input Signals Panel"), pos)
+        self.addSubInterface(self.sshInterface, AppIcon.ROUTER, self.tr("SSH Connect Interface"), pos)
+        self.addSubInterface(self.cmdInterface, AppIcon.TERMINAL, self.tr("Command Logs Interface"), pos)
+        self.addSubInterface(self.InIOInterface, AppIcon.SENSOR, self.tr("Input Signals Panel"), pos)
         
         self.addSubInterface(self.camerasInterface, AppIcon.CAMERA, self.tr("Cameras Interface"), pos)
         self.addSubInterface(self.cam00Interface, AppIcon.CAMERA, self.tr("UVC Camera 01"), pos, self.camerasInterface)

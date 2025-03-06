@@ -13,11 +13,7 @@
         {
             "prefix": "/icons",
             "dirs": [
-                "./icons/camera",
-                "./icons/ethernet",
-                "./icons/camera-web",
-                "./icons/connect",
-                "./icons/setting"
+                "./icons/"
             ]
         }
     ]

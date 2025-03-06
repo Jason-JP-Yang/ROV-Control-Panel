@@ -24,16 +24,6 @@
         <file>icons\camera\s-solid_white.svg</file>
         <file>icons\camera\solid_black.svg</file>
         <file>icons\camera\solid_white.svg</file>
-
-        <file>icons\ethernet\regular_black.svg</file>
-        <file>icons\ethernet\regular_white.svg</file>
-        <file>icons\ethernet\s-regular_black.svg</file>
-        <file>icons\ethernet\s-regular_white.svg</file>
-        <file>icons\ethernet\s-solid_black.svg</file>
-        <file>icons\ethernet\s-solid_white.svg</file>
-        <file>icons\ethernet\solid_black.svg</file>
-        <file>icons\ethernet\solid_white.svg</file>
-
         <file>icons\camera-web\regular_black.svg</file>
         <file>icons\camera-web\regular_white.svg</file>
         <file>icons\camera-web\s-regular_black.svg</file>
@@ -42,7 +32,6 @@
         <file>icons\camera-web\s-solid_white.svg</file>
         <file>icons\camera-web\solid_black.svg</file>
         <file>icons\camera-web\solid_white.svg</file>
-
         <file>icons\connect\regular_black.svg</file>
         <file>icons\connect\regular_white.svg</file>
         <file>icons\connect\s-regular_black.svg</file>
@@ -51,7 +40,54 @@
         <file>icons\connect\s-solid_white.svg</file>
         <file>icons\connect\solid_black.svg</file>
         <file>icons\connect\solid_white.svg</file>
-
+        <file>icons\dharmachakra\regular_black.svg</file>
+        <file>icons\dharmachakra\regular_white.svg</file>
+        <file>icons\dharmachakra\s-regular_black.svg</file>
+        <file>icons\dharmachakra\s-regular_white.svg</file>
+        <file>icons\dharmachakra\s-solid_black.svg</file>
+        <file>icons\dharmachakra\s-solid_white.svg</file>
+        <file>icons\dharmachakra\solid_black.svg</file>
+        <file>icons\dharmachakra\solid_white.svg</file>
+        <file>icons\ethernet\regular_black.svg</file>
+        <file>icons\ethernet\regular_white.svg</file>
+        <file>icons\ethernet\s-regular_black.svg</file>
+        <file>icons\ethernet\s-regular_white.svg</file>
+        <file>icons\ethernet\s-solid_black.svg</file>
+        <file>icons\ethernet\s-solid_white.svg</file>
+        <file>icons\ethernet\solid_black.svg</file>
+        <file>icons\ethernet\solid_white.svg</file>
+        <file>icons\home\regular_black.svg</file>
+        <file>icons\home\regular_white.svg</file>
+        <file>icons\home\s-regular_black.svg</file>
+        <file>icons\home\s-regular_white.svg</file>
+        <file>icons\home\s-solid_black.svg</file>
+        <file>icons\home\s-solid_white.svg</file>
+        <file>icons\home\solid_black.svg</file>
+        <file>icons\home\solid_white.svg</file>
+        <file>icons\joystick\regular_black.svg</file>
+        <file>icons\joystick\regular_white.svg</file>
+        <file>icons\joystick\s-regular_black.svg</file>
+        <file>icons\joystick\s-regular_white.svg</file>
+        <file>icons\joystick\s-solid_black.svg</file>
+        <file>icons\joystick\s-solid_white.svg</file>
+        <file>icons\joystick\solid_black.svg</file>
+        <file>icons\joystick\solid_white.svg</file>
+        <file>icons\router\regular_black.svg</file>
+        <file>icons\router\regular_white.svg</file>
+        <file>icons\router\s-regular_black.svg</file>
+        <file>icons\router\s-regular_white.svg</file>
+        <file>icons\router\s-solid_black.svg</file>
+        <file>icons\router\s-solid_white.svg</file>
+        <file>icons\router\solid_black.svg</file>
+        <file>icons\router\solid_white.svg</file>
+        <file>icons\sensor\regular_black.svg</file>
+        <file>icons\sensor\regular_white.svg</file>
+        <file>icons\sensor\s-regular_black.svg</file>
+        <file>icons\sensor\s-regular_white.svg</file>
+        <file>icons\sensor\s-solid_black.svg</file>
+        <file>icons\sensor\s-solid_white.svg</file>
+        <file>icons\sensor\solid_black.svg</file>
+        <file>icons\sensor\solid_white.svg</file>
         <file>icons\setting\regular_black.svg</file>
         <file>icons\setting\regular_white.svg</file>
         <file>icons\setting\s-regular_black.svg</file>
@@ -60,15 +96,14 @@
         <file>icons\setting\s-solid_white.svg</file>
         <file>icons\setting\solid_black.svg</file>
         <file>icons\setting\solid_white.svg</file>
-
-        <file>icons\unknown\regular_black.svg</file>
-        <file>icons\unknown\regular_white.svg</file>
-        <file>icons\unknown\s-regular_black.svg</file>
-        <file>icons\unknown\s-regular_white.svg</file>
-        <file>icons\unknown\s-solid_black.svg</file>
-        <file>icons\unknown\s-solid_white.svg</file>
-        <file>icons\unknown\solid_black.svg</file>
-        <file>icons\unknown\solid_white.svg</file>
+        <file>icons\terminal\regular_black.svg</file>
+        <file>icons\terminal\regular_white.svg</file>
+        <file>icons\terminal\s-regular_black.svg</file>
+        <file>icons\terminal\s-regular_white.svg</file>
+        <file>icons\terminal\s-solid_black.svg</file>
+        <file>icons\terminal\s-solid_white.svg</file>
+        <file>icons\terminal\solid_black.svg</file>
+        <file>icons\terminal\solid_white.svg</file>
 
     </qresource>
 </RCC>

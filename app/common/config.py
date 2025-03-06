@@ -95,7 +95,7 @@ class Config(QConfig):
     language = OptionsConfigItem(
         "MainWindow", "Language", Language.AUTO, OptionsValidator(Language), LanguageSerializer(), restart=True)
     IconStyle = OptionsConfigItem(
-        "MainWindow", "IconStyle", "Classic Solid", OptionsValidator(["Classic Solid", 
+        "MainWindow", "IconStyle", "Classic Regular", OptionsValidator(["Classic Solid", 
         "Classic Regular", "Sharp Solid", "Sharp Regular"]))
 
     # Material
