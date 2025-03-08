@@ -15,7 +15,7 @@ class StyleSheet(StyleSheetBase, Enum):
     SETTING_INTERFACE = "setting_interface"
     GALLERY_INTERFACE = "gallery_interface"
     NAVIGATION_VIEW_INTERFACE = "navigation_view_interface"
-    CMD_LOGGER_INTERFACE = "cmd_interface"
+    CAMERA_INTERFACE = "camera_interface"
 
     def path(self, theme=Theme.AUTO):
         theme = qconfig.theme if theme == Theme.AUTO else theme

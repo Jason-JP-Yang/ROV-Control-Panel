@@ -1,0 +1,12 @@
+/* 标签 */
+QLabel#CamInfoLabel {
+    font: 14px 'Microsoft YaHei';
+    background-color: transparent;
+    color: white;
+}
+
+QLabel#cameraLabel {
+    font: 33px 'Microsoft YaHei Light';
+    background-color: transparent;
+    color: white;
+}

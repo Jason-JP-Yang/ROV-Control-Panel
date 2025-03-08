@@ -10,6 +10,7 @@ from qfluentwidgets import FluentIcon as FIF
 # from .gallery_interface import GalleryInterface
 from .home_interface import HomeInterface
 from .setting_interface import SettingInterface
+from .camera_interface import CameraInterface
 from ..components.page_frame import Widget as PageFrame
 
 from ..common.config import cfg
@@ -41,7 +42,8 @@ class MainWindow(FluentWindow):
         self.sensorsInterface = PageFrame("ROV Sensors Control Panel")
         
         self.camerasInterface = PageFrame("Cameras Interface - Summarize")
-        self.cam00Interface = PageFrame("Cameras Interface - UVC_CAM_01")
+        # self.cam00Interface = PageFrame("Cameras Interface - UVC_CAM_01")
+        self.cam00Interface = CameraInterface()
         self.cam01Interface = PageFrame("Cameras Interface - UVC_CAM_02")
         self.cam02Interface = PageFrame("Cameras Interface - UVC_CAM_03")
         self.cam03Interface = PageFrame("Cameras Interface - UVC_CAM_04")

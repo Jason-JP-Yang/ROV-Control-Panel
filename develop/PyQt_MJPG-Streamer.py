@@ -136,7 +136,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         # 创建UI组件
-        self.video_label = QLabel(self)
+        self.video_label = QLabel("Camera Stream", self)
         self.video_label.setAlignment(Qt.AlignCenter)
         self.video_label.setMinimumSize(640, 480)
         
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     w1 = MainWindow(stream_url)
     w1.show()
 
-    stream_url_2 = "http://192.168.137.102:8080/?action=stream_1"
-    w2 = MainWindow(stream_url_2)
-    w2.show()
+    # stream_url_2 = "http://192.168.137.102:8080/?action=stream_1"
+    # w2 = MainWindow(stream_url_2)
+    # w2.show()
     sys.exit(app.exec_())
