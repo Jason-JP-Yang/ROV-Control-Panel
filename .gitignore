@@ -1,6 +1,7 @@
 # Custom Settings
 test/
 /app/config/
+*.pth
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
