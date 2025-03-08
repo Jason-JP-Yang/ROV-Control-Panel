@@ -4,6 +4,7 @@ test/
 checkpoints/
 .vscode/
 fontawesome-pro-icons/
+*.pth
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

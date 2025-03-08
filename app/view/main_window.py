@@ -14,7 +14,6 @@ from ..components.page_frame import Widget as PageFrame
 
 from ..common.config import cfg
 from ..common.signal_bus import signalBus
-from ..common.translator import Translator
 from ..common import resource
 from ..common.icon import Icon as AppIcon
 
