@@ -57,7 +57,6 @@ class SettingInterface(ScrollArea):
             self.tr("Configure the connection between ROV and computer using SSH Protocol"), 
             self.rovConnectGroup
         )
-        self.sshconfig.sshUpdated.connect(self.__ssh_pop_infoBar)
         self.camconfig = CustomCameraSettingCard(
             cfg,
             AppIcon.CAMERA,
@@ -305,6 +304,7 @@ class SettingInterface(ScrollArea):
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
+        self.sshconfig.sshUpdated.connect(self.__ssh_pop_infoBar)
         cfg.appRestartSig.connect(self.__showRestartTooltip)
 
         # music in the pc

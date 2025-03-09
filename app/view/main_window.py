@@ -66,6 +66,9 @@ class MainWindow(FluentWindow):
         # signalBus.switchToSampleCard.connect(self.switchToSample)
         # signalBus.supportSignal.connect(self.onSupport)
 
+        self.stackedWidget.currentChanged.connect(lambda: 
+            signalBus.CurrentWidgetSwitch.emit(self.stackedWidget.currentIndex()))
+
     def initNavigation(self):
         # add navigation items
         # t = Translator()
